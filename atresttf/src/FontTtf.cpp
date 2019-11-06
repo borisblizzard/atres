@@ -23,8 +23,8 @@
 #include "atresttfUtil.h"
 #include "FontTtf.h"
 
-#define UNICODE_CHAR_SPACE 0x20
-#define UNICODE_CHAR_NON_BREAKING_SPACE 0xA0
+#define UNICODE_CHAR_SPACE 0x20u
+#define UNICODE_CHAR_NON_BREAKING_SPACE 0xA0u
 
 #define FLOAT2PTLONG(value) (long)((value) * 64)
 #define FLOAT2PTSIZE(value) (int)((value) * 64)

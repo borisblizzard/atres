@@ -86,9 +86,9 @@
 		(code) == 0xFF63	/* fullwidth closing quotation mark */ \
 	)
 
-#define UNICODE_CHAR_SPACE 0x20
-#define UNICODE_CHAR_ZERO_WIDTH_SPACE 0x200B
-#define UNICODE_CHAR_NEWLINE 0x0A
+#define UNICODE_CHAR_SPACE 0x20u
+#define UNICODE_CHAR_ZERO_WIDTH_SPACE 0x200Bu
+#define UNICODE_CHAR_NEWLINE 0x0Au
 
 #define EFFECT_MODE_NORMAL 0
 #define EFFECT_MODE_SHADOW 1
@@ -98,7 +98,7 @@
 
 namespace atres
 {
-	static hstr _iconPlaceholder = hstr::fromUnicode((unsigned int)0xA0);
+	static hstr _iconPlaceholder = hstr::fromUnicode(0xA0u);
 	static float sqrt05 = hsqrt(0.5f);
 
 	Renderer* renderer = NULL;
@@ -125,6 +125,10 @@ namespace atres
 		this->_font = NULL;
 		this->_iconFont = NULL;
 		this->_texture = NULL;
+		this->_character = NULL;
+		this->_borderCharacter = NULL;
+		this->_icon = NULL;
+		this->_borderIcon = NULL;
 		this->_height = 0.0f;
 		this->_lineHeight = 0.0f;
 		this->_descender = 0.0f;
@@ -774,6 +778,10 @@ namespace atres
 		this->_texture = NULL;
 		this->_characters = this->_dummyCharacters;
 		this->_icons = this->_dummyIcons;
+		this->_character = NULL;
+		this->_borderCharacter = NULL;
+		this->_icon = NULL;
+		this->_borderIcon = NULL;
 		this->_height = 0.0f;
 		this->_lineHeight = 0.0f;
 		this->_descender = 0.0f;
@@ -801,6 +809,7 @@ namespace atres
 		this->_textUnderlineThickness = 1.0f;
 		this->_italicActive = false;
 		this->_hideActive = false;
+		this->_code = 0;
 	}
 
 	void Renderer::_initializeRenderSequences()
@@ -1857,6 +1866,11 @@ namespace atres
 			{
 				checkingSpaces = !checkingSpaces;
 			}
+		}
+		std::ustring str = text.uStr();
+		if (str.find(0xA0u) >= 0 && text.contains("Teo"))
+		{
+			int a = 0;
 		}
 		return result;
 	}
