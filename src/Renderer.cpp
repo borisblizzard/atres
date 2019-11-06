@@ -1867,11 +1867,6 @@ namespace atres
 				checkingSpaces = !checkingSpaces;
 			}
 		}
-		std::ustring str = text.uStr();
-		if (str.find(0xA0u) >= 0 && text.contains("Teo"))
-		{
-			int a = 0;
-		}
 		return result;
 	}
 
