@@ -154,6 +154,8 @@ namespace atres
 		this->_italicActive = false;
 		this->_hideActive = false;
 		this->_alpha = -1;
+		this->_texture = NULL;
+		this->_code = 0;
 		// cache
 		this->cacheText = new Cache<CacheEntryText>();
 		this->cacheTextUnformatted = new Cache<CacheEntryText>();
