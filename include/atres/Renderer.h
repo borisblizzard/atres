@@ -112,22 +112,22 @@ namespace atres
 		// due to floating point rounding errors.
 		// @see getTextWidth()
 		// @see makeRenderLines()
-		float getTextHeight(chstr fontName, chstr text, float maxWidth);
+		float getTextHeight(chstr fontName, chstr text, float maxWidth, Horizontal horizontal = Horizontal::LeftWrapped);
 		// @note If you used getTextWidth() or makeRenderLines() to get the text width, you probably want to add a very little number to that width (e.g. 0.01)
 		// due to floating point rounding errors.
 		// @see getTextWidth()
 		// @see makeRenderLines()
-		float getTextHeight(chstr text, float maxWidth);
+		float getTextHeight(chstr text, float maxWidth, Horizontal horizontal = Horizontal::LeftWrapped);
 		// @note If you used getTextWidth() or makeRenderLines() to get the text width, you probably want to add a very little number to that width (e.g. 0.01)
 		// due to floating point rounding errors.
 		// @see getTextWidth()
 		// @see makeRenderLines()
-		float getTextHeightUnformatted(chstr fontName, chstr text, float maxWidth);
+		float getTextHeightUnformatted(chstr fontName, chstr text, float maxWidth, Horizontal horizontal = Horizontal::LeftWrapped);
 		// @note If you used getTextWidth() or makeRenderLines() to get the text width, you probably want to add a very little number to that width (e.g. 0.01)
 		// due to floating point rounding errors.
 		// @see getTextWidth()
 		// @see makeRenderLines()
-		float getTextHeightUnformatted(chstr text, float maxWidth);
+		float getTextHeightUnformatted(chstr text, float maxWidth, Horizontal horizontal = Horizontal::LeftWrapped);
 		hstr getFittingText(chstr fontName, chstr text, float maxWidth);
 		hstr getFittingText(chstr text, float maxWidth);
 		hstr getFittingTextUnformatted(chstr fontName, chstr text, float maxWidth);

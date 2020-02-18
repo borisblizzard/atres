@@ -2673,12 +2673,12 @@ namespace atres
 		return this->getTextAdvanceX("", "[-]" + text);
 	}
 
-	float Renderer::getTextHeight(chstr fontName, chstr text, float maxWidth)
+	float Renderer::getTextHeight(chstr fontName, chstr text, float maxWidth, Horizontal horizontal)
 	{
 		if (text != "" && maxWidth > 0.0f)
 		{
 			grectf defaultRect(0.0f, 0.0f, maxWidth, CHECK_RECT_SIZE);
-			this->_lines = this->makeRenderLines(fontName, defaultRect, text, Horizontal::LeftWrapped, Vertical::Top);
+			this->_lines = this->makeRenderLines(fontName, defaultRect, text, horizontal, Vertical::Top);
 			if (this->_lines.size() > 0)
 			{
 				Font* font = this->getFont(fontName);
@@ -2689,19 +2689,19 @@ namespace atres
 		return 0.0f;
 	}
 	
-	float Renderer::getTextHeight(chstr text, float maxWidth)
+	float Renderer::getTextHeight(chstr text, float maxWidth, Horizontal horizontal)
 	{
-		return this->getTextHeight("", text, maxWidth);
+		return this->getTextHeight("", text, maxWidth, horizontal);
 	}
 
-	float Renderer::getTextHeightUnformatted(chstr fontName, chstr text, float maxWidth)
+	float Renderer::getTextHeightUnformatted(chstr fontName, chstr text, float maxWidth, Horizontal horizontal)
 	{
-		return this->getTextHeight(fontName, "[-]" + text, maxWidth);
+		return this->getTextHeight(fontName, "[-]" + text, maxWidth, horizontal);
 	}
 
-	float Renderer::getTextHeightUnformatted(chstr text, float maxWidth)
+	float Renderer::getTextHeightUnformatted(chstr text, float maxWidth, Horizontal horizontal)
 	{
-		return this->getTextHeight("", "[-]" + text, maxWidth);
+		return this->getTextHeight("", "[-]" + text, maxWidth, horizontal);
 	}
 
 	hstr Renderer::getFittingText(chstr fontName, chstr text, float maxWidth)
