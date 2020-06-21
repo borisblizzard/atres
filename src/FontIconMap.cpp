@@ -76,7 +76,7 @@ namespace atres
 		{
 			return NULL;
 		}
-		hstr filename = april::rendersys->findTextureResource(hrdir::joinPath(this->fontDirectory, iconName));
+		hstr filename = april::rendersys->findTextureResource(hrdir::joinPath(this->fontDirectory, iconName), true);
 		if (filename == "")
 		{
 			return NULL;
