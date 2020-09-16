@@ -60,6 +60,23 @@ namespace atres
 		HL_ENUM_DECLARE(TextEffect, Border);
 	));
 
+	class atresExport ColorData
+	{
+	public:
+		april::Color colorTopLeft;
+		april::Color colorTopRight;
+		april::Color colorBottomLeft;
+		april::Color colorBottomRight;
+		bool horizontalColorFit;
+		bool verticalColorFit;
+
+		ColorData();
+		ColorData(const april::Color& colorTopLeft, const april::Color& colorTopRight, const april::Color& colorBottomLeft,
+			const april::Color& colorBottomRight, bool horizontalColorFit, bool verticalColorFit);
+		~ColorData();
+
+	};
+
 	class atresExport RectDefinition
 	{
 	public:
@@ -276,12 +293,20 @@ namespace atres
 		Horizontal horizontal;
 		Vertical vertical;
 		april::Color color;
+		bool useMoreColors;
+		april::Color colorTopRight;
+		april::Color colorBottomLeft;
+		april::Color colorBottomRight;
+		bool horizontalColorFit;
+		bool verticalColorFit;
 		gvec2f offset;
 
 		CacheEntryBasicText();
 		virtual ~CacheEntryBasicText();
 
 		void set(chstr text, chstr fontName, cgrectf rect, Horizontal horizontal, Vertical vertical, const april::Color& color, cgvec2f offset);
+		void set(chstr text, chstr fontName, cgrectf rect, Horizontal horizontal, Vertical vertical, const april::Color& color, bool useMoreColors,
+			const april::Color& colorTopRight, const april::Color& colorBottomLeft, const april::Color& colorBottomRight, bool horizontalColorFit, bool verticalColorFit, cgvec2f offset);
 		bool operator==(const CacheEntryBasicText& other) const;
 		bool operator!=(const CacheEntryBasicText& other) const;
 		unsigned int hash() const;

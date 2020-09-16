@@ -74,6 +74,31 @@ namespace atres
 		HL_ENUM_DEFINE(TextEffect, Border);
 	));
 
+	ColorData::ColorData() :
+		colorTopLeft(april::Color::White),
+		colorTopRight(april::Color::White),
+		colorBottomLeft(april::Color::White),
+		colorBottomRight(april::Color::White),
+		horizontalColorFit(false),
+		verticalColorFit(false)
+	{
+	}
+
+	ColorData::ColorData(const april::Color& colorTopLeft, const april::Color& colorTopRight, const april::Color& colorBottomLeft,
+		const april::Color& colorBottomRight, bool horizontalColorFit, bool verticalColorFit)
+	{
+		this->colorTopLeft = colorTopLeft;
+		this->colorTopRight = colorTopRight;
+		this->colorBottomLeft = colorBottomLeft;
+		this->colorBottomRight = colorBottomRight;
+		this->horizontalColorFit = horizontalColorFit;
+		this->verticalColorFit = verticalColorFit;
+	}
+
+	ColorData::~ColorData()
+	{
+	}
+
 	RectDefinition::RectDefinition()
 	{
 	}
@@ -263,7 +288,10 @@ namespace atres
 
 	CacheEntryBasicText::CacheEntryBasicText() :
 		horizontal(Horizontal::CenterWrapped),
-		vertical(Vertical::Center)
+		vertical(Vertical::Center),
+		useMoreColors(false),
+		horizontalColorFit(false),
+		verticalColorFit(false)
 	{
 	}
 	
@@ -281,12 +309,38 @@ namespace atres
 		// overrides alpha to 255 because of a conflict within AprilUI that would cause alpha-animated
 		// text to be cached for every possible alpha value (0-255) and rendered very slowly
 		this->color = april::Color(color, 255);
+		this->useMoreColors = false;
+		this->colorTopRight = april::Color::White;
+		this->colorBottomLeft = april::Color::White;
+		this->colorBottomRight = april::Color::White;
+		this->horizontalColorFit = false;
+		this->verticalColorFit = false;
+		this->offset = offset;
+	}
+
+	void CacheEntryBasicText::set(chstr text, chstr fontName, cgrectf rect, Horizontal horizontal, Vertical vertical, const april::Color& color, bool useMoreColors,
+		const april::Color& colorTopRight, const april::Color& colorBottomLeft, const april::Color& colorBottomRight, bool horizontalColorFit, bool verticalColorFit, cgvec2f offset)
+	{
+		this->text = text;
+		this->fontName = fontName;
+		this->rect = rect;
+		this->horizontal = horizontal;
+		this->vertical = vertical;
+		// overrides alpha to 255 because of a conflict within AprilUI that would cause alpha-animated
+		// text to be cached for every possible alpha value (0-255) and rendered very slowly
+		this->color = april::Color(color, 255);
+		this->useMoreColors = useMoreColors;
+		this->colorTopRight = colorTopRight;
+		this->colorBottomLeft = colorBottomLeft;
+		this->colorBottomRight = colorBottomRight;
+		this->horizontalColorFit = horizontalColorFit;
+		this->verticalColorFit = verticalColorFit;
 		this->offset = offset;
 	}
 
 	bool CacheEntryBasicText::operator==(const CacheEntryBasicText& other) const
 	{
-		return (this->text == other.text &&
+		if (this->text == other.text &&
 			this->fontName == other.fontName &&
 			this->rect == other.rect &&
 			this->horizontal == other.horizontal &&
@@ -294,7 +348,28 @@ namespace atres
 			this->color.r == other.color.r &&
 			this->color.g == other.color.g &&
 			this->color.b == other.color.b &&
-			this->offset == other.offset);
+			this->offset == other.offset)
+		{
+			if (this->useMoreColors == other.useMoreColors)
+			{
+				if (!this->useMoreColors ||
+					this->colorTopRight.r == other.colorTopRight.r &&
+					this->colorTopRight.g == other.colorTopRight.g &&
+					this->colorTopRight.b == other.colorTopRight.b &&
+					this->colorBottomLeft.r == other.colorBottomLeft.r &&
+					this->colorBottomLeft.g == other.colorBottomLeft.g &&
+					this->colorBottomLeft.b == other.colorBottomLeft.b &&
+					this->colorBottomRight.r == other.colorBottomRight.r &&
+					this->colorBottomRight.g == other.colorBottomRight.g &&
+					this->colorBottomRight.b == other.colorBottomRight.b &&
+					this->horizontalColorFit == other.horizontalColorFit &&
+					this->verticalColorFit == other.verticalColorFit)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	bool CacheEntryBasicText::operator!=(const CacheEntryBasicText& other) const
@@ -315,6 +390,7 @@ namespace atres
 		}
 		// this code with fvar is used to avoid strict aliasing violations
 		const float* fvar = NULL;
+		const bool* bvar = NULL;
 		fvar = &this->rect.x;	result ^= *((unsigned int*)fvar);
 		fvar = &this->rect.y;	result ^= *((unsigned int*)fvar);
 		fvar = &this->rect.w;	result ^= *((unsigned int*)fvar);
@@ -326,6 +402,18 @@ namespace atres
 		result ^= (this->color.b << 24);
 		fvar = &this->offset.x;	result ^= *((unsigned int*)fvar);
 		fvar = &this->offset.y;	result ^= *((unsigned int*)fvar);
+		bvar = &this->useMoreColors;	result ^= *((unsigned int*)bvar);
+		result ^= (this->colorTopRight.r << 8);
+		result ^= (this->colorTopRight.g << 16);
+		result ^= (this->colorTopRight.b << 24);
+		result ^= (this->colorBottomLeft.r << 8);
+		result ^= (this->colorBottomLeft.g << 16);
+		result ^= (this->colorBottomLeft.b << 24);
+		result ^= (this->colorBottomRight.r << 8);
+		result ^= (this->colorBottomRight.g << 16);
+		result ^= (this->colorBottomRight.b << 24);
+		bvar = &this->horizontalColorFit;	result ^= *((unsigned int*)bvar);
+		bvar = &this->verticalColorFit;		result ^= *((unsigned int*)bvar);
 		return result;
 	}
 
@@ -372,9 +460,7 @@ namespace atres
 
 	bool CacheEntryLine::operator==(const CacheEntryLine& other) const
 	{
-		return (this->text == other.text &&
-			this->fontName == other.fontName &&
-			this->size == other.size);
+		return (this->text == other.text && this->fontName == other.fontName && this->size == other.size);
 	}
 
 	bool CacheEntryLine::operator!=(const CacheEntryLine& other) const

@@ -79,26 +79,38 @@ namespace atres
 		void analyzeText(chstr fontName, chstr text);
 		hstr analyzeFormatting(chstr text, harray<FormatTag>& tags);
 		harray<RenderLine> removeOutOfBoundLines(const harray<RenderLine>& lines, cgrectf rect);
-		void verticalCorrection(harray<RenderLine>& lines, cgrectf rect, Vertical vertical, float x, float lineHeight, float descender, float internalDescender);
+		void verticalCorrection(harray<RenderLine>& lines, cgrectf rect, const Vertical& vertical, float x, float lineHeight, float descender, float internalDescender);
 		void horizontalCorrection(harray<RenderLine>& lines, cgrectf rect, Horizontal horizontal, float y);
 		harray<RenderWord> createRenderWords(cgrectf rect, chstr text, const harray<FormatTag>& tags);
-		harray<RenderLine> createRenderLines(cgrectf rect, chstr text, const harray<FormatTag>& tags, Horizontal horizontal, Vertical vertical, cgvec2f offset = gvec2f());
+		harray<RenderLine> createRenderLines(cgrectf rect, chstr text, const harray<FormatTag>& tags, const Horizontal& horizontal, const Vertical& vertical, cgvec2f offset = gvec2f());
 		RenderText createRenderText(cgrectf rect, chstr text, const harray<RenderLine>& lines, const harray<FormatTag>& tags);
 		harray<RenderSequence> optimizeSequences(harray<RenderSequence>& sequences);
 		harray<RenderLiningSequence> optimizeSequences(harray<RenderLiningSequence>& sequences);
 
-		void drawText(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal = Horizontal::Left,
-			Vertical vertical = Vertical::Center, const april::Color& color = april::Color::White, cgvec2f offset = gvec2f());
-		void drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal = Horizontal::Left,
-			Vertical vertical = Vertical::Center, const april::Color& color = april::Color::White, cgvec2f offset = gvec2f());
-		void drawText(cgrectf rect, chstr text, Horizontal horizontal = Horizontal::Left,
-			Vertical vertical = Vertical::Center, const april::Color& color = april::Color::White, cgvec2f offset = gvec2f());
-		void drawTextUnformatted(cgrectf rect, chstr text, Horizontal horizontal = Horizontal::Left,
-			Vertical vertical = Vertical::Center, const april::Color& color = april::Color::White, cgvec2f offset = gvec2f());
-		harray<RenderLine> makeRenderLines(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal = Horizontal::Left,
-			Vertical vertical = Vertical::Center, const april::Color& color = april::Color::White, cgvec2f offset = gvec2f());
-		harray<RenderLine> makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal = Horizontal::Left,
-			Vertical vertical = Vertical::Center, const april::Color& color = april::Color::White, cgvec2f offset = gvec2f());
+		// base methods
+		void drawText(cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center);
+		void drawTextUnformatted(cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center);
+		void drawText(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center);
+		void drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center);
+		// color-based
+		void drawText(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset = gvec2f());
+		void drawTextUnformatted(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset = gvec2f());
+		void drawText(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset = gvec2f());
+		void drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset = gvec2f());
+		// multi-color-based
+		void drawText(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
+		void drawTextUnformatted(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
+		void drawText(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
+		void drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
+		// base methods
+		harray<RenderLine> makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center);
+		harray<RenderLine> makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center);
+		// color-based
+		harray<RenderLine> makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset = gvec2f());
+		harray<RenderLine> makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset = gvec2f());
+		// multi-color-based
+		harray<RenderLine> makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
+		harray<RenderLine> makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
 
 		float getTextWidth(chstr fontName, chstr text);
 		float getTextWidth(chstr text);
@@ -112,22 +124,22 @@ namespace atres
 		// due to floating point rounding errors.
 		// @see getTextWidth()
 		// @see makeRenderLines()
-		float getTextHeight(chstr fontName, chstr text, float maxWidth, Horizontal horizontal = Horizontal::LeftWrapped);
+		float getTextHeight(chstr fontName, chstr text, float maxWidth, const Horizontal& horizontal = Horizontal::LeftWrapped);
 		// @note If you used getTextWidth() or makeRenderLines() to get the text width, you probably want to add a very little number to that width (e.g. 0.01)
 		// due to floating point rounding errors.
 		// @see getTextWidth()
 		// @see makeRenderLines()
-		float getTextHeight(chstr text, float maxWidth, Horizontal horizontal = Horizontal::LeftWrapped);
+		float getTextHeight(chstr text, float maxWidth, const Horizontal& horizontal = Horizontal::LeftWrapped);
 		// @note If you used getTextWidth() or makeRenderLines() to get the text width, you probably want to add a very little number to that width (e.g. 0.01)
 		// due to floating point rounding errors.
 		// @see getTextWidth()
 		// @see makeRenderLines()
-		float getTextHeightUnformatted(chstr fontName, chstr text, float maxWidth, Horizontal horizontal = Horizontal::LeftWrapped);
+		float getTextHeightUnformatted(chstr fontName, chstr text, float maxWidth, const Horizontal& horizontal = Horizontal::LeftWrapped);
 		// @note If you used getTextWidth() or makeRenderLines() to get the text width, you probably want to add a very little number to that width (e.g. 0.01)
 		// due to floating point rounding errors.
 		// @see getTextWidth()
 		// @see makeRenderLines()
-		float getTextHeightUnformatted(chstr text, float maxWidth, Horizontal horizontal = Horizontal::LeftWrapped);
+		float getTextHeightUnformatted(chstr text, float maxWidth, const Horizontal& horizontal = Horizontal::LeftWrapped);
 		hstr getFittingText(chstr fontName, chstr text, float maxWidth);
 		hstr getFittingText(chstr text, float maxWidth);
 		hstr getFittingTextUnformatted(chstr fontName, chstr text, float maxWidth);
@@ -167,7 +179,7 @@ namespace atres
 		harray<FormatTag> _makeDefaultTagsUnformatted(const april::Color& color, chstr fontName);
 
 		void _drawRenderText(RenderText& renderText, const april::Color& color);
-		void _drawRenderSequence(RenderSequence& sequence, const april::Color& color);
+		void _drawRenderSequence(RenderSequence& sequence, unsigned char alpha);
 		void _drawRenderLiningSequence(RenderLiningSequence& sequence, const april::Color& color);
 
 	private:

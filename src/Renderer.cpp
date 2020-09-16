@@ -630,7 +630,7 @@ namespace atres
 		return result;
 	}
 	
-	void Renderer::verticalCorrection(harray<RenderLine>& lines, cgrectf rect, Vertical vertical, float y, float lineHeight, float descender, float internalDescender)
+	void Renderer::verticalCorrection(harray<RenderLine>& lines, cgrectf rect, const Vertical& vertical, float y, float lineHeight, float descender, float internalDescender)
 	{
 		harray<RenderLine> result;
 		int lineCount = lines.size();
@@ -1870,8 +1870,7 @@ namespace atres
 		return result;
 	}
 
-	harray<RenderLine> Renderer::createRenderLines(cgrectf rect, chstr text, const harray<FormatTag>& tags,
-		Horizontal horizontal, Vertical vertical, cgvec2f offset)
+	harray<RenderLine> Renderer::createRenderLines(cgrectf rect, chstr text, const harray<FormatTag>& tags, const Horizontal& horizontal, const Vertical& vertical, cgvec2f offset)
 	{
 		this->analyzeText(tags.first().data, text); // by convention, the first tag is the font name
 		harray<RenderWord> words = this->createRenderWords(rect, text, tags);
@@ -2052,6 +2051,7 @@ namespace atres
 							this->_renderRect = this->_iconFont->makeRenderRectangle(drawRect, area, this->_iconName);
 							if (this->_renderRect.src.w > 0.0f && this->_renderRect.src.h > 0.0f && this->_renderRect.dest.w > 0.0f && this->_renderRect.dest.h > 0.0f)
 							{
+								// TODOatres - add gradient colors here
 								this->_textSequence.addRenderRectangle(this->_renderRect, this->_textSequence.currentColor, italicSkewOffset);
 								switch (this->_effectMode)
 								{
@@ -2203,6 +2203,7 @@ namespace atres
 									if (this->_code != UNICODE_CHAR_SPACE && this->_code != UNICODE_CHAR_ZERO_WIDTH_SPACE)
 									{
 										this->_renderRect.dest.y -= this->_character->bearing.y * this->_scale;
+										// TODOatres - add gradient colors here
 										this->_textSequence.addRenderRectangle(this->_renderRect, this->_textSequence.currentColor, italicSkewOffset);
 										switch (this->_effectMode)
 										{
@@ -2396,7 +2397,7 @@ namespace atres
 	{
 		foreach (RenderSequence, it, renderText.shadowSequences)
 		{
-			this->_drawRenderSequence((*it), april::Color((*it).currentColor, (unsigned char)((*it).currentColor.a * color.a_f())));
+			this->_drawRenderSequence((*it), color.a);
 		}
 		foreach (RenderLiningSequence, it, renderText.shadowLiningSequences)
 		{
@@ -2406,11 +2407,11 @@ namespace atres
 		{
 			if ((*it).multiplyAlpha)
 			{
-				this->_drawRenderSequence((*it), april::Color((*it).currentColor, (unsigned char)((*it).currentColor.a * color.a_f() * color.a_f())));
+				this->_drawRenderSequence((*it), (unsigned char)(color.a * color.a_f()));
 			}
 			else
 			{
-				this->_drawRenderSequence((*it), april::Color((*it).currentColor, (unsigned char)((*it).currentColor.a * color.a_f())));
+				this->_drawRenderSequence((*it), color.a);
 			}
 		}
 		foreach (RenderLiningSequence, it, renderText.borderLiningSequences)
@@ -2435,7 +2436,7 @@ namespace atres
 			april::rendersys->render(april::RenderOperation::LineList, (april::PlainVertex*)v, v.size(), polygonColor);
 			v.clear();
 #endif
-			this->_drawRenderSequence((*it), april::Color((*it).currentColor, color.a));
+			this->_drawRenderSequence((*it), color.a);
 		}
 		foreach (RenderLiningSequence, it, renderText.textLiningSequences)
 		{
@@ -2443,9 +2444,9 @@ namespace atres
 		}
 	}
 
-	void Renderer::_drawRenderSequence(RenderSequence& sequence, const april::Color& color)
+	void Renderer::_drawRenderSequence(RenderSequence& sequence, unsigned char alpha)
 	{
-		if (sequence.vertices.size() == 0 || sequence.texture == NULL || color.a == 0)
+		if (sequence.vertices.size() == 0 || sequence.texture == NULL || alpha == 0)
 		{
 			return;
 		}
@@ -2459,10 +2460,10 @@ namespace atres
 		{
 			april::rendersys->setColorMode(april::ColorMode::Multiply);
 		}
-		if (sequence.lastAlpha != color.a)
+		if (sequence.lastAlpha != alpha)
 		{
-			sequence.lastAlpha = color.a;
-			float alphaFloat = color.a_f();
+			sequence.lastAlpha = alpha;
+			float alphaFloat = alpha * 0.003921569f; // 1 / 255;
 			for_iter (i, 0, sequence.vertices.size())
 			{
 				sequence.colors[i].a = (unsigned char)(sequence.currentColor.a * alphaFloat);
@@ -2512,7 +2513,37 @@ namespace atres
 		return true;
 	}
 	
-	void Renderer::drawText(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical, const april::Color& color,
+	void Renderer::drawText(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical)
+	{
+		this->drawText("", rect, text, horizontal, vertical, april::Color::White, gvec2f());
+	}
+
+	void Renderer::drawTextUnformatted(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical)
+	{
+		this->drawTextUnformatted("", rect, text, horizontal, vertical, april::Color::White, gvec2f());
+	}
+
+	void Renderer::drawText(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical)
+	{
+		this->drawText(fontName, rect, text, horizontal, vertical, april::Color::White, gvec2f());
+	}
+
+	void Renderer::drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical)
+	{
+		this->drawTextUnformatted(fontName, rect, text, horizontal, vertical, april::Color::White, gvec2f());
+	}
+
+	void Renderer::drawText(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset)
+	{
+		this->drawText("", rect, text, horizontal, vertical, color, offset);
+	}
+
+	void Renderer::drawTextUnformatted(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset)
+	{
+		this->drawTextUnformatted("", rect, text, horizontal, vertical, color, offset);
+	}
+
+	void Renderer::drawText(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color,
 		cgvec2f offset)
 	{
 		this->_cacheEntryTextData.set(text, fontName, rect, horizontal, vertical, color, offset);
@@ -2538,7 +2569,7 @@ namespace atres
 		this->_drawRenderText(this->_cacheEntryText->value, color);
 	}
 
-	void Renderer::drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical,
+	void Renderer::drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical,
 		const april::Color& color, cgvec2f offset)
 	{
 		this->_cacheEntryTextData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
@@ -2563,17 +2594,76 @@ namespace atres
 		this->_drawRenderText(this->_cacheEntryText->value, color);
 	}
 
-	void Renderer::drawText(cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical, const april::Color& color, cgvec2f offset)
+	void Renderer::drawText(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset)
 	{
-		this->drawText("", rect, text, horizontal, vertical, color, offset);
+		this->drawText("", rect, text, horizontal, vertical, colorData, offset);
 	}
 
-	void Renderer::drawTextUnformatted(cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical, const april::Color& color, cgvec2f offset)
+	void Renderer::drawTextUnformatted(cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset)
 	{
-		this->drawTextUnformatted("", rect, text, horizontal, vertical, color, offset);
+		this->drawTextUnformatted("", rect, text, horizontal, vertical, colorData, offset);
 	}
 
-	harray<RenderLine> Renderer::makeRenderLines(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical, const april::Color& color, cgvec2f offset)
+	void Renderer::drawText(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset)
+	{
+		this->_cacheEntryTextData.set(text, fontName, rect, horizontal, vertical, colorData.colorTopLeft, offset);
+		this->_cacheEntryText = this->cacheText->get(this->_cacheEntryTextData);
+		if (this->_cacheEntryText == NULL || !this->_checkTextures())
+		{
+			hstr unformattedText = text;
+			harray<FormatTag> tags = this->_makeDefaultTags(colorData.colorTopLeft, fontName, unformattedText);
+			this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(colorData.colorTopLeft, 255), offset);
+			this->_cacheEntryLines = this->cacheLines->get(this->_cacheEntryLinesData);
+			if (this->_cacheEntryLines != NULL)
+			{
+				this->_lines = this->_cacheEntryLines->value;
+			}
+			else
+			{
+				this->_lines = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
+			}
+			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags);
+			this->_cacheEntryText = this->cacheText->add(this->_cacheEntryTextData);
+			this->cacheText->update();
+		}
+		this->_drawRenderText(this->_cacheEntryText->value, colorData.colorTopLeft);
+	}
+
+	void Renderer::drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset)
+	{
+		this->_cacheEntryTextData.set(text, fontName, rect, horizontal, vertical, april::Color(colorData.colorTopLeft, 255), offset);
+		this->_cacheEntryText = this->cacheTextUnformatted->get(this->_cacheEntryTextData);
+		if (this->_cacheEntryText != NULL || !this->_checkTextures())
+		{
+			harray<FormatTag> tags = this->_makeDefaultTagsUnformatted(colorData.colorTopLeft, fontName);
+			this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(colorData.colorTopLeft, 255), offset);
+			this->_cacheEntryLines = this->cacheLinesUnformatted->get(this->_cacheEntryLinesData);
+			if (this->_cacheEntryLines != NULL)
+			{
+				this->_lines = this->_cacheEntryLines->value;
+			}
+			else
+			{
+				this->_lines = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
+			}
+			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags);
+			this->_cacheEntryText = this->cacheTextUnformatted->add(this->_cacheEntryTextData);
+			this->cacheTextUnformatted->update();
+		}
+		this->_drawRenderText(this->_cacheEntryText->value, colorData.colorTopLeft);
+	}
+
+	harray<RenderLine> Renderer::makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical)
+	{
+		return this->makeRenderLines(fontName, rect, text, horizontal, vertical, april::Color::White, gvec2f());
+	}
+
+	harray<RenderLine> Renderer::makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical)
+	{
+		return this->makeRenderLinesUnformatted(fontName, rect, text, horizontal, vertical, april::Color::White, gvec2f());
+	}
+
+	harray<RenderLine> Renderer::makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset)
 	{
 		this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, color, offset);
 		this->_cacheEntryLines = this->cacheLines->get(this->_cacheEntryLinesData);
@@ -2588,7 +2678,7 @@ namespace atres
 		return this->_cacheEntryLines->value;
 	}
 
-	harray<RenderLine> Renderer::makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical, const april::Color& color, cgvec2f offset)
+	harray<RenderLine> Renderer::makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset)
 	{
 		this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
 		this->_cacheEntryLines = this->cacheLinesUnformatted->get(this->_cacheEntryLinesData);
@@ -2689,7 +2779,7 @@ namespace atres
 		return this->getTextAdvanceX("", "[-]" + text);
 	}
 
-	float Renderer::getTextHeight(chstr fontName, chstr text, float maxWidth, Horizontal horizontal)
+	float Renderer::getTextHeight(chstr fontName, chstr text, float maxWidth, const Horizontal& horizontal)
 	{
 		if (text != "" && maxWidth > 0.0f)
 		{
@@ -2705,17 +2795,17 @@ namespace atres
 		return 0.0f;
 	}
 	
-	float Renderer::getTextHeight(chstr text, float maxWidth, Horizontal horizontal)
+	float Renderer::getTextHeight(chstr text, float maxWidth, const Horizontal& horizontal)
 	{
 		return this->getTextHeight("", text, maxWidth, horizontal);
 	}
 
-	float Renderer::getTextHeightUnformatted(chstr fontName, chstr text, float maxWidth, Horizontal horizontal)
+	float Renderer::getTextHeightUnformatted(chstr fontName, chstr text, float maxWidth, const Horizontal& horizontal)
 	{
 		return this->getTextHeight(fontName, "[-]" + text, maxWidth, horizontal);
 	}
 
-	float Renderer::getTextHeightUnformatted(chstr text, float maxWidth, Horizontal horizontal)
+	float Renderer::getTextHeightUnformatted(chstr text, float maxWidth, const Horizontal& horizontal)
 	{
 		return this->getTextHeight("", "[-]" + text, maxWidth, horizontal);
 	}
