@@ -254,9 +254,12 @@ namespace atres
 		unsigned int _code;
 		hstr _iconName;
 
-		CacheEntryText _cacheEntryText;
-		CacheEntryLines _cacheEntryLines;
-		CacheEntryLine _cacheEntryLine;
+		CacheEntryText* _cacheEntryText;
+		CacheEntryText _cacheEntryTextData;
+		CacheEntryLines* _cacheEntryLines;
+		CacheEntryLines _cacheEntryLinesData;
+		CacheEntryLine* _cacheEntryLine;
+		CacheEntryLine _cacheEntryLineData;
 
 	};
 	

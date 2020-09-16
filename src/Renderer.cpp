@@ -818,10 +818,10 @@ namespace atres
 		this->_textSequence = RenderSequence();
 		this->_shadowSequences.clear();
 		this->_shadowSequence = RenderSequence();
-		this->_shadowSequence.color = this->shadowColor;
+		this->_shadowSequence.currentColor = this->shadowColor;
 		this->_borderSequences.clear();
 		this->_borderSequence = RenderSequence();
-		this->_borderSequence.color = this->borderColor;
+		this->_borderSequence.currentColor = this->borderColor;
 		this->_renderRect = RenderRectangle();
 		this->_textLiningSequences.clear();
 		this->_textStrikeThroughSequence = RenderLiningSequence();
@@ -1464,42 +1464,42 @@ namespace atres
 
 	void Renderer::_checkSequenceSwitch()
 	{
-		if (this->_textSequence.texture != this->_texture || this->_textSequence.color != this->_textColor)
+		if (this->_textSequence.texture != this->_texture || this->_textSequence.currentColor != this->_textColor)
 		{
 			if (this->_textSequence.vertices.size() > 0)
 			{
 				this->_textSequences += this->_textSequence;
-				this->_textSequence.vertices.clear();
+				this->_textSequence.clear();
 			}
 			this->_textSequence.texture = this->_texture;
-			this->_textSequence.color = this->_textColor;
+			this->_textSequence.currentColor = this->_textColor;
 		}
-		if (this->_shadowSequence.texture != this->_texture || this->_shadowSequence.color != this->_shadowColor)
+		if (this->_shadowSequence.texture != this->_texture || this->_shadowSequence.currentColor != this->_shadowColor)
 		{
 			if (this->_shadowSequence.vertices.size() > 0)
 			{
 				this->_shadowSequences += this->_shadowSequence;
-				this->_shadowSequence.vertices.clear();
+				this->_shadowSequence.clear();
 			}
 			this->_shadowSequence.texture = this->_texture;
-			this->_shadowSequence.color = this->_shadowColor;
+			this->_shadowSequence.currentColor = this->_shadowColor;
 		}
-		if (this->_borderSequence.texture != this->_texture || this->_borderSequence.color != this->_borderColor)
+		if (this->_borderSequence.texture != this->_texture || this->_borderSequence.currentColor != this->_borderColor)
 		{
 			if (this->_borderSequence.vertices.size() > 0)
 			{
 				this->_borderSequences += this->_borderSequence;
-				this->_borderSequence.vertices.clear();
+				this->_borderSequence.clear();
 			}
 			this->_borderSequence.texture = this->_texture;
-			this->_borderSequence.color = this->_borderColor;
+			this->_borderSequence.currentColor = this->_borderColor;
 		}
 		if (this->_textStrikeThroughSequence.color != this->_strikeThroughColor)
 		{
 			if (this->_textStrikeThroughSequence.vertices.size() > 0)
 			{
 				this->_textLiningSequences += this->_textStrikeThroughSequence;
-				this->_textStrikeThroughSequence.vertices.clear();
+				this->_textStrikeThroughSequence.clear();
 			}
 			this->_textStrikeThroughSequence.color = this->_strikeThroughColor;
 		}
@@ -1508,7 +1508,7 @@ namespace atres
 			if (this->_textUnderlineSequence.vertices.size() > 0)
 			{
 				this->_textLiningSequences += this->_textUnderlineSequence;
-				this->_textUnderlineSequence.vertices.clear();
+				this->_textUnderlineSequence.clear();
 			}
 			this->_textUnderlineSequence.color = this->_underlineColor;
 		}
@@ -1517,13 +1517,13 @@ namespace atres
 			if (this->_shadowStrikeThroughSequence.vertices.size() > 0)
 			{
 				this->_shadowLiningSequences += this->_shadowStrikeThroughSequence;
-				this->_shadowStrikeThroughSequence.vertices.clear();
+				this->_shadowStrikeThroughSequence.clear();
 			}
 			this->_shadowStrikeThroughSequence.color = this->_shadowColor;
 			if (this->_shadowUnderlineSequence.vertices.size() > 0)
 			{
 				this->_shadowLiningSequences += this->_shadowUnderlineSequence;
-				this->_shadowUnderlineSequence.vertices.clear();
+				this->_shadowUnderlineSequence.clear();
 			}
 			this->_shadowUnderlineSequence.color = this->_shadowColor;
 		}
@@ -1532,13 +1532,13 @@ namespace atres
 			if (this->_borderStrikeThroughSequence.vertices.size() > 0)
 			{
 				this->_borderLiningSequences += this->_borderStrikeThroughSequence;
-				this->_borderStrikeThroughSequence.vertices.clear();
+				this->_borderStrikeThroughSequence.clear();
 			}
 			this->_borderStrikeThroughSequence.color = this->_borderColor;
 			if (this->_borderUnderlineSequence.vertices.size() > 0)
 			{
 				this->_borderLiningSequences += this->_borderUnderlineSequence;
-				this->_borderUnderlineSequence.vertices.clear();
+				this->_borderUnderlineSequence.clear();
 			}
 			this->_borderUnderlineSequence.color = this->_borderColor;
 		}
@@ -1551,17 +1551,17 @@ namespace atres
 			if (this->_textStrikeThroughSequence.vertices.size() > 0)
 			{
 				this->_textLiningSequences += this->_textStrikeThroughSequence;
-				this->_textStrikeThroughSequence.vertices.clear();
+				this->_textStrikeThroughSequence.clear();
 			}
 			if (this->_shadowStrikeThroughSequence.vertices.size() > 0)
 			{
 				this->_shadowLiningSequences += this->_shadowStrikeThroughSequence;
-				this->_shadowStrikeThroughSequence.vertices.clear();
+				this->_shadowStrikeThroughSequence.clear();
 			}
 			if (this->_borderStrikeThroughSequence.vertices.size() > 0)
 			{
 				this->_borderLiningSequences += this->_borderStrikeThroughSequence;
-				this->_borderStrikeThroughSequence.vertices.clear();
+				this->_borderStrikeThroughSequence.clear();
 			}
 		}
 		if (!this->_underlineActive || force)
@@ -1569,17 +1569,17 @@ namespace atres
 			if (this->_textUnderlineSequence.vertices.size() > 0)
 			{
 				this->_textLiningSequences += this->_textUnderlineSequence;
-				this->_textUnderlineSequence.vertices.clear();
+				this->_textUnderlineSequence.clear();
 			}
 			if (this->_shadowUnderlineSequence.vertices.size() > 0)
 			{
 				this->_shadowLiningSequences += this->_shadowUnderlineSequence;
-				this->_shadowUnderlineSequence.vertices.clear();
+				this->_shadowUnderlineSequence.clear();
 			}
 			if (this->_borderUnderlineSequence.vertices.size() > 0)
 			{
 				this->_borderLiningSequences += this->_borderUnderlineSequence;
-				this->_borderUnderlineSequence.vertices.clear();
+				this->_borderUnderlineSequence.clear();
 			}
 		}
 	}
@@ -2052,33 +2052,33 @@ namespace atres
 							this->_renderRect = this->_iconFont->makeRenderRectangle(drawRect, area, this->_iconName);
 							if (this->_renderRect.src.w > 0.0f && this->_renderRect.src.h > 0.0f && this->_renderRect.dest.w > 0.0f && this->_renderRect.dest.h > 0.0f)
 							{
-								this->_textSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+								this->_textSequence.addRenderRectangle(this->_renderRect, this->_textSequence.currentColor, italicSkewOffset);
 								switch (this->_effectMode)
 								{
 								case EFFECT_MODE_SHADOW: // shadow
 									this->_renderRect.dest += this->_shadowOffset * (this->globalOffsets ? 1.0f : this->_scale);
-									this->_shadowSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+									this->_shadowSequence.addRenderRectangle(this->_renderRect, this->_shadowSequence.currentColor, italicSkewOffset);
 									break;
 								case EFFECT_MODE_BORDER: // border
 									if (this->_iconFont->getBorderMode() == Font::BorderMode::Software || !this->_iconFont->hasBorderIcon(this->_iconName, this->_borderFontThickness))
 									{
 										currentRect = this->_renderRect;
 										this->_renderRect.dest = currentRect.dest + gvec2f(-this->_borderThickness * sqrt05, -this->_borderThickness * sqrt05);
-										this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 										this->_renderRect.dest = currentRect.dest + gvec2f(this->_borderThickness * sqrt05, -this->_borderThickness * sqrt05);
-										this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 										this->_renderRect.dest = currentRect.dest + gvec2f(-this->_borderThickness * sqrt05, this->_borderThickness * sqrt05);
-										this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 										this->_renderRect.dest = currentRect.dest + gvec2f(this->_borderThickness * sqrt05, this->_borderThickness * sqrt05);
-										this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 										this->_renderRect.dest = currentRect.dest + gvec2f(0.0f, -this->_borderThickness);
-										this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 										this->_renderRect.dest = currentRect.dest + gvec2f(-this->_borderThickness, 0.0f);
-										this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 										this->_renderRect.dest = currentRect.dest + gvec2f(this->_borderThickness, 0.0f);
-										this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 										this->_renderRect.dest = currentRect.dest + gvec2f(0.0f, this->_borderThickness);
-										this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 										this->_borderSequence.multiplyAlpha = true;
 									}
 									else
@@ -2098,7 +2098,7 @@ namespace atres
 										drawRect.w += rectSize.x * 2.0f;
 										drawRect.h += rectSize.y * 2.0f;
 										this->_renderRect = this->_iconFont->makeBorderRenderRectangle(drawRect, area, this->_iconName, this->_borderFontThickness);
-										this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 										this->_borderSequence.texture = this->_iconFont->getBorderTexture(this->_iconName, this->_borderFontThickness);
 										this->_borderSequence.multiplyAlpha = false;
 									}
@@ -2203,33 +2203,33 @@ namespace atres
 									if (this->_code != UNICODE_CHAR_SPACE && this->_code != UNICODE_CHAR_ZERO_WIDTH_SPACE)
 									{
 										this->_renderRect.dest.y -= this->_character->bearing.y * this->_scale;
-										this->_textSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+										this->_textSequence.addRenderRectangle(this->_renderRect, this->_textSequence.currentColor, italicSkewOffset);
 										switch (this->_effectMode)
 										{
 										case EFFECT_MODE_SHADOW: // shadow
 											this->_renderRect.dest += this->_shadowOffset * (this->globalOffsets ? 1.0f : this->_scale);
-											this->_shadowSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+											this->_shadowSequence.addRenderRectangle(this->_renderRect, this->_shadowSequence.currentColor, italicSkewOffset);
 											break;
 										case EFFECT_MODE_BORDER: // border
 											if (this->_font->getBorderMode() == Font::BorderMode::Software || !this->_font->hasBorderCharacter(this->_code, this->_borderFontThickness))
 											{
 												currentRect = this->_renderRect;
 												this->_renderRect.dest = currentRect.dest + gvec2f(-this->_borderThickness * sqrt05, -this->_borderThickness * sqrt05);
-												this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+												this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 												this->_renderRect.dest = currentRect.dest + gvec2f(this->_borderThickness * sqrt05, -this->_borderThickness * sqrt05);
-												this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+												this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 												this->_renderRect.dest = currentRect.dest + gvec2f(-this->_borderThickness * sqrt05, this->_borderThickness * sqrt05);
-												this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+												this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 												this->_renderRect.dest = currentRect.dest + gvec2f(this->_borderThickness * sqrt05, this->_borderThickness * sqrt05);
-												this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+												this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 												this->_renderRect.dest = currentRect.dest + gvec2f(0.0f, -this->_borderThickness);
-												this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+												this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 												this->_renderRect.dest = currentRect.dest + gvec2f(-this->_borderThickness, 0.0f);
-												this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+												this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 												this->_renderRect.dest = currentRect.dest + gvec2f(this->_borderThickness, 0.0f);
-												this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+												this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 												this->_renderRect.dest = currentRect.dest + gvec2f(0.0f, this->_borderThickness);
-												this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+												this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 												this->_borderSequence.multiplyAlpha = true;
 											}
 											else
@@ -2248,7 +2248,7 @@ namespace atres
 												drawRect.h += rectSize.y * 2.0f;
 												this->_renderRect = this->_font->makeBorderRenderRectangle(drawRect, area, this->_code, this->_borderFontThickness);
 												this->_renderRect.dest.y -= this->_character->bearing.y * this->_scale;
-												this->_borderSequence.addRenderRectangle(this->_renderRect, italicSkewOffset);
+												this->_borderSequence.addRenderRectangle(this->_renderRect, this->_borderSequence.currentColor, italicSkewOffset);
 												this->_borderSequence.texture = this->_font->getBorderTexture(this->_code, this->_borderFontThickness);
 												this->_borderSequence.multiplyAlpha = false;
 											}
@@ -2325,17 +2325,17 @@ namespace atres
 		if (this->_textSequence.vertices.size() > 0)
 		{
 			this->_textSequences += this->_textSequence;
-			this->_textSequence.vertices.clear();
+			this->_textSequence.clear();
 		}
 		if (this->_shadowSequence.vertices.size() > 0)
 		{
 			this->_shadowSequences += this->_shadowSequence;
-			this->_shadowSequence.vertices.clear();
+			this->_shadowSequence.clear();
 		}
 		if (this->_borderSequence.vertices.size() > 0)
 		{
 			this->_borderSequences += this->_borderSequence;
-			this->_borderSequence.vertices.clear();
+			this->_borderSequence.clear();
 		}
 		this->_updateLiningSequenceSwitch(true);
 		// clear data and optimizations
@@ -2359,9 +2359,9 @@ namespace atres
 			current = sequences.removeFirst();
 			for_iter (i, 0, sequences.size())
 			{
-				if (current.texture == sequences[i].texture && current.color.hex(true) == sequences[i].color.hex(true) && current.multiplyAlpha == sequences[i].multiplyAlpha)
+				if (current.texture == sequences[i].texture && current.currentColor.hex(true) == sequences[i].currentColor.hex(true) && current.multiplyAlpha == sequences[i].multiplyAlpha)
 				{
-					current.vertices += sequences[i].vertices;
+					current.mergeFrom(sequences[i]);
 					sequences.removeAt(i);
 					--i;
 				}
@@ -2382,7 +2382,7 @@ namespace atres
 			{
 				if (current.color.hex(true) == sequences[i].color.hex(true))
 				{
-					current.vertices += sequences[i].vertices;
+					current.mergeFrom(sequences[i]);
 					sequences.removeAt(i);
 					--i;
 				}
@@ -2396,7 +2396,7 @@ namespace atres
 	{
 		foreach (RenderSequence, it, renderText.shadowSequences)
 		{
-			this->_drawRenderSequence((*it), april::Color((*it).color, (unsigned char)((*it).color.a * color.a_f())));
+			this->_drawRenderSequence((*it), april::Color((*it).currentColor, (unsigned char)((*it).currentColor.a * color.a_f())));
 		}
 		foreach (RenderLiningSequence, it, renderText.shadowLiningSequences)
 		{
@@ -2406,11 +2406,11 @@ namespace atres
 		{
 			if ((*it).multiplyAlpha)
 			{
-				this->_drawRenderSequence((*it), april::Color((*it).color, (unsigned char)((*it).color.a * color.a_f() * color.a_f())));
+				this->_drawRenderSequence((*it), april::Color((*it).currentColor, (unsigned char)((*it).currentColor.a * color.a_f() * color.a_f())));
 			}
 			else
 			{
-				this->_drawRenderSequence((*it), april::Color((*it).color, (unsigned char)((*it).color.a * color.a_f())));
+				this->_drawRenderSequence((*it), april::Color((*it).currentColor, (unsigned char)((*it).currentColor.a * color.a_f())));
 			}
 		}
 		foreach (RenderLiningSequence, it, renderText.borderLiningSequences)
@@ -2435,7 +2435,7 @@ namespace atres
 			april::rendersys->render(april::RenderOperation::LineList, (april::PlainVertex*)v, v.size(), polygonColor);
 			v.clear();
 #endif
-			this->_drawRenderSequence((*it), april::Color((*it).color, color.a));
+			this->_drawRenderSequence((*it), april::Color((*it).currentColor, color.a));
 		}
 		foreach (RenderLiningSequence, it, renderText.textLiningSequences)
 		{
@@ -2459,7 +2459,17 @@ namespace atres
 		{
 			april::rendersys->setColorMode(april::ColorMode::Multiply);
 		}
-		april::rendersys->render(april::RenderOperation::TriangleList, (april::TexturedVertex*)sequence.vertices, sequence.vertices.size(), color);
+		if (sequence.lastAlpha != color.a)
+		{
+			sequence.lastAlpha = color.a;
+			float alphaFloat = color.a_f();
+			for_iter (i, 0, sequence.vertices.size())
+			{
+				sequence.colors[i].a = (unsigned char)(sequence.currentColor.a * alphaFloat);
+				sequence.vertices[i].color = april::rendersys->getNativeColorUInt(sequence.colors[i]);
+			}
+		}
+		april::rendersys->render(april::RenderOperation::TriangleList, (april::ColoredTexturedVertex*)sequence.vertices, sequence.vertices.size());
 	}
 
 	void Renderer::_drawRenderLiningSequence(RenderLiningSequence& sequence, const april::Color& color)
@@ -2475,7 +2485,7 @@ namespace atres
 
 	bool Renderer::_checkTextures()
 	{
-		foreach (RenderSequence, it, this->_cacheEntryText.value.textSequences)
+		foreach (RenderSequence, it, this->_cacheEntryText->value.textSequences)
 		{
 			if (!(*it).texture->isUploaded())
 			{
@@ -2483,7 +2493,7 @@ namespace atres
 				return false;
 			}
 		}
-		foreach (RenderSequence, it, this->_cacheEntryText.value.shadowSequences)
+		foreach (RenderSequence, it, this->_cacheEntryText->value.shadowSequences)
 		{
 			if (!(*it).texture->isUploaded())
 			{
@@ -2491,7 +2501,7 @@ namespace atres
 				return false;
 			}
 		}
-		foreach (RenderSequence, it, this->_cacheEntryText.value.borderSequences)
+		foreach (RenderSequence, it, this->_cacheEntryText->value.borderSequences)
 		{
 			if (!(*it).texture->isUploaded())
 			{
@@ -2505,48 +2515,52 @@ namespace atres
 	void Renderer::drawText(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical, const april::Color& color,
 		cgvec2f offset)
 	{
-		this->_cacheEntryText.set(text, fontName, rect, horizontal, vertical, color, offset);
-		if (!this->cacheText->get(this->_cacheEntryText) || !this->_checkTextures())
+		this->_cacheEntryTextData.set(text, fontName, rect, horizontal, vertical, color, offset);
+		this->_cacheEntryText = this->cacheText->get(this->_cacheEntryTextData);
+		if (this->_cacheEntryText == NULL || !this->_checkTextures())
 		{
 			hstr unformattedText = text;
 			harray<FormatTag> tags = this->_makeDefaultTags(color, fontName, unformattedText);
-			this->_cacheEntryLines.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
-			if (this->cacheLines->get(this->_cacheEntryLines))
+			this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
+			this->_cacheEntryLines = this->cacheLines->get(this->_cacheEntryLinesData);
+			if (this->_cacheEntryLines != NULL)
 			{
-				this->_lines = this->_cacheEntryLines.value;
+				this->_lines = this->_cacheEntryLines->value;
 			}
 			else
 			{
 				this->_lines = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
 			}
-			this->_cacheEntryText.value = this->createRenderText(rect, text, this->_lines, tags);
-			this->cacheText->add(this->_cacheEntryText);
+			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags);
+			this->_cacheEntryText = this->cacheText->add(this->_cacheEntryTextData);
 			this->cacheText->update();
 		}
-		this->_drawRenderText(this->_cacheEntryText.value, color);
+		this->_drawRenderText(this->_cacheEntryText->value, color);
 	}
 
 	void Renderer::drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical,
 		const april::Color& color, cgvec2f offset)
 	{
-		this->_cacheEntryText.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
-		if (!this->cacheTextUnformatted->get(this->_cacheEntryText) || !this->_checkTextures())
+		this->_cacheEntryTextData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
+		this->_cacheEntryText = this->cacheTextUnformatted->get(this->_cacheEntryTextData);
+		if (this->_cacheEntryText != NULL || !this->_checkTextures())
 		{
 			harray<FormatTag> tags = this->_makeDefaultTagsUnformatted(color, fontName);
-			this->_cacheEntryLines.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
-			if (this->cacheLinesUnformatted->get(this->_cacheEntryLines))
+			this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
+			this->_cacheEntryLines = this->cacheLinesUnformatted->get(this->_cacheEntryLinesData);
+			if (this->_cacheEntryLines != NULL)
 			{
-				this->_lines = this->_cacheEntryLines.value;
+				this->_lines = this->_cacheEntryLines->value;
 			}
 			else
 			{
 				this->_lines = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
 			}
-			this->_cacheEntryText.value = this->createRenderText(rect, text, this->_lines, tags);
-			this->cacheTextUnformatted->add(this->_cacheEntryText);
+			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags);
+			this->_cacheEntryText = this->cacheTextUnformatted->add(this->_cacheEntryTextData);
 			this->cacheTextUnformatted->update();
 		}
-		this->_drawRenderText(this->_cacheEntryText.value, color);
+		this->_drawRenderText(this->_cacheEntryText->value, color);
 	}
 
 	void Renderer::drawText(cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical, const april::Color& color, cgvec2f offset)
@@ -2561,29 +2575,31 @@ namespace atres
 
 	harray<RenderLine> Renderer::makeRenderLines(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical, const april::Color& color, cgvec2f offset)
 	{
-		this->_cacheEntryLines.set(text, fontName, rect, horizontal, vertical, color, offset);
-		if (!this->cacheLines->get(this->_cacheEntryLines))
+		this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, color, offset);
+		this->_cacheEntryLines = this->cacheLines->get(this->_cacheEntryLinesData);
+		if (this->_cacheEntryLines == NULL)
 		{
 			hstr unformattedText = text;
 			harray<FormatTag> tags = this->_makeDefaultTags(color, fontName, unformattedText);
-			this->_cacheEntryLines.value = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
-			this->cacheLines->add(this->_cacheEntryLines);
+			this->_cacheEntryLinesData.value = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
+			this->_cacheEntryLines = this->cacheLines->add(this->_cacheEntryLinesData);
 			this->cacheLines->update();
 		}
-		return this->_cacheEntryLines.value;
+		return this->_cacheEntryLines->value;
 	}
 
 	harray<RenderLine> Renderer::makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, Horizontal horizontal, Vertical vertical, const april::Color& color, cgvec2f offset)
 	{
-		this->_cacheEntryLines.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
-		if (!this->cacheLinesUnformatted->get(this->_cacheEntryLines))
+		this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
+		this->_cacheEntryLines = this->cacheLinesUnformatted->get(this->_cacheEntryLinesData);
+		if (this->_cacheEntryLines == NULL)
 		{
 			harray<FormatTag> tags = this->_makeDefaultTagsUnformatted(color, fontName);
-			this->_cacheEntryLines.value = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
-			this->cacheLinesUnformatted->add(this->_cacheEntryLines);
+			this->_cacheEntryLinesData.value = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
+			this->_cacheEntryLines = this->cacheLinesUnformatted->add(this->_cacheEntryLinesData);
 			this->cacheLinesUnformatted->update();
 		}
-		return this->_cacheEntryLines.value;
+		return this->_cacheEntryLines->value;
 	}
 
 	harray<FormatTag> Renderer::_makeDefaultTags(const april::Color& color, chstr fontName, hstr& text)

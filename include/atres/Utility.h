@@ -115,14 +115,18 @@ namespace atres
 	{
 	public:
 		april::Texture* texture;
-		april::Color color;
+		april::Color currentColor;
 		bool multiplyAlpha;
-		harray<april::TexturedVertex> vertices;
+		unsigned char lastAlpha;
+		harray<april::ColoredTexturedVertex> vertices;
+		harray<april::Color> colors;
 		
 		RenderSequence();
 
 		/// @note Not thread-safe!
-		void addRenderRectangle(const RenderRectangle& rect, float italicSkewOffset);
+		void addRenderRectangle(const RenderRectangle& rect, const april::Color& color, float italicSkewOffset);
+		void mergeFrom(const RenderSequence& other);
+		void clear();
 
 	};
 	
@@ -136,6 +140,8 @@ namespace atres
 
 		/// @note Not thread-safe!
 		void addRectangle(cgrectf rect);
+		void mergeFrom(const RenderLiningSequence& other);
+		void clear();
 
 	};
 

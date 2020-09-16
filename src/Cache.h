@@ -32,7 +32,7 @@ namespace atres
 		/// @brief Alias for simpler code.
 		typedef typename std::vector<T>::iterator iterator_t;
 		/// @brief Alias for simpler code.
-		typedef typename std::list<T>::iterator list_iterator_t;
+		typedef typename std::list<T*>::iterator list_iterator_t;
 	public:
 		/// @brief Constructor.
 		inline Cache()
@@ -48,7 +48,7 @@ namespace atres
 		}
 		/// @brief Adds a cache entry.
 		/// @param[in] entry The cache entry.
-		inline void add(T& entry)
+		inline T* add(T& entry)
 		{
 			unsigned int hash = entry.hash();
 			if (!this->data.hasKey(hash))
@@ -56,12 +56,14 @@ namespace atres
 				this->data[hash] = harray<T>();
 			}
 			this->data[hash] += entry;
-			this->entries += this->data[hash].last();
+			T* result = &this->data[hash].last();
+			this->entries += result;
+			return result;
 		}
 		/// @brief Gets a cache entry.
 		/// @param[out] entry The output cache entry. Will only be filled with data if return is true.
-		/// @return True if entry could be found.
-		inline bool get(T& entry)
+		/// @return The entry.
+		inline T* get(T& entry)
 		{
 			unsigned int hash = entry.hash();
 			if (this->data.hasKey(hash))
@@ -71,12 +73,11 @@ namespace atres
 				{
 					if (entry == (*it))
 					{
-						entry.value = (*it).value;
-						return true;
+						return &(*it);
 					}
 				}
 			}
-			return false;
+			return NULL;
 		}
 		/// @brief Removes a cache entry.
 		/// @param[in] entry The cache entry.
@@ -87,13 +88,15 @@ namespace atres
 			{
 				if (this->data[hash].size() == 1)
 				{
+					this->entries.remove(&this->data[hash].last());
 					this->data.removeKey(hash);
 				}
 				else
 				{
-					this->data[hash].remove(entry);
+					int index = this->data[hash].indexOf(entry);
+					this->entries.remove(&this->data[hash][index]);
+					this->data[hash].removeAt(index);
 				}
-				this->entries.remove(entry);
 			}
 		}
 		/// @brief Clears cache.
@@ -116,10 +119,10 @@ namespace atres
 				int overSize = this->data.size() - this->maxSize;
 				if (overSize > 0)
 				{
-					hlist<T> removed = this->entries(0, overSize);
+					hlist<T*> removed = this->entries(0, overSize);
 					for (list_iterator_t it = removed.begin(); it != removed.end(); ++it)
 					{
-						this->removeEntry(*it);
+						this->removeEntry(*(*it));
 					}
 				}
 			}
@@ -132,7 +135,7 @@ namespace atres
 		hmap<unsigned int, harray<T> > data;
 		/// @brief A list of all hashes.
 		/// @note Using hlist because add/remove has a constant complexity while harray would have to reorder/resize all elements.
-		hlist<T> entries;
+		hlist<T*> entries;
 		
 	};
 	

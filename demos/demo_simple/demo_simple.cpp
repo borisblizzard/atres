@@ -240,8 +240,12 @@ void __aprilApplicationInit()
 		drawRect.setSize(april::getSystemInfo().displayResolution);
 #endif
 		april::init(april::RenderSystemType::Default, april::WindowType::Default);
-		april::createRenderSystem();
-		april::createWindow((int)drawRect.w, (int)drawRect.h, false, "demo_simple");
+		april::RenderSystem::Options renderOptions;
+		renderOptions.vSync = false;
+		april::createRenderSystem(renderOptions);
+		april::Window::Options windowOptions;
+		windowOptions.fpsCounter = true;
+		april::createWindow((int)drawRect.w, (int)drawRect.h, false, "demo_simple", windowOptions);
 		april::window->setUpdateDelegate(updateDelegate);
 		april::window->setKeyDelegate(keyDelegate);
 		april::window->setMouseDelegate(mouseDelegate);

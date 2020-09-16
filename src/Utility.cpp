@@ -8,13 +8,14 @@
 
 #include <april/Color.h>
 #include <april/RenderSystem.h>
+#include <hltypes/hlog.h>
 #include <hltypes/hstring.h>
 
 #include "Utility.h"
 
 namespace atres
 {
-	static april::TexturedVertex _tVertices[6];
+	static april::ColoredTexturedVertex _ctVertices[6];
 	static april::PlainVertex _pVertices[6];
 	static float _top = 0.0f;
 	static float _bottom = 0.0f;
@@ -105,29 +106,48 @@ namespace atres
 
 	RenderSequence::RenderSequence() :
 		texture(NULL),
-		multiplyAlpha(false)
+		multiplyAlpha(false),
+		lastAlpha(0)
 	{
 	}
 
-	void RenderSequence::addRenderRectangle(const RenderRectangle& rect, float italicSkewOffset)
+	void RenderSequence::addRenderRectangle(const RenderRectangle& rect, const april::Color& color, float italicSkewOffset)
 	{
-		_tVertices[0].x = _tVertices[2].x = _tVertices[4].x = rect.dest.left();
-		_tVertices[1].x = _tVertices[3].x = _tVertices[5].x = rect.dest.right();
-		_tVertices[0].y = _tVertices[1].y = _tVertices[3].y = rect.dest.top();
-		_tVertices[2].y = _tVertices[4].y = _tVertices[5].y = rect.dest.bottom();
-		_tVertices[0].u = _tVertices[2].u = _tVertices[4].u = rect.src.left();
-		_tVertices[1].u = _tVertices[3].u = _tVertices[5].u = rect.src.right();
-		_tVertices[0].v = _tVertices[1].v = _tVertices[3].v = rect.src.top();
-		_tVertices[2].v = _tVertices[4].v = _tVertices[5].v = rect.src.bottom();
+		_ctVertices[0].x = _ctVertices[2].x = _ctVertices[4].x = rect.dest.left();
+		_ctVertices[1].x = _ctVertices[3].x = _ctVertices[5].x = rect.dest.right();
+		_ctVertices[0].y = _ctVertices[1].y = _ctVertices[3].y = rect.dest.top();
+		_ctVertices[2].y = _ctVertices[4].y = _ctVertices[5].y = rect.dest.bottom();
+		_ctVertices[0].u = _ctVertices[2].u = _ctVertices[4].u = rect.src.left();
+		_ctVertices[1].u = _ctVertices[3].u = _ctVertices[5].u = rect.src.right();
+		_ctVertices[0].v = _ctVertices[1].v = _ctVertices[3].v = rect.src.top();
+		_ctVertices[2].v = _ctVertices[4].v = _ctVertices[5].v = rect.src.bottom();
 		if (italicSkewOffset > 0.0f)
 		{
-			_tVertices[0].x += italicSkewOffset;
-			_tVertices[1].x += italicSkewOffset;
-			_tVertices[3].x += italicSkewOffset;
+			_ctVertices[0].x += italicSkewOffset;
+			_ctVertices[1].x += italicSkewOffset;
+			_ctVertices[3].x += italicSkewOffset;
 		}
-		this->vertices.add(_tVertices, 6);
+		int colorValue = april::rendersys->getNativeColorUInt(color);
+		for_iter (i, 0, 6)
+		{
+			_ctVertices[i].color = colorValue;
+		}
+		this->vertices.add(_ctVertices, 6);
+		this->colors.add(color, 6);
+	}
+
+	void RenderSequence::mergeFrom(const RenderSequence& other)
+	{
+		this->vertices += other.vertices;
+		this->colors += other.colors;
 	}
 	
+	void RenderSequence::clear()
+	{
+		this->vertices.clear();
+		this->colors.clear();
+	}
+
 	RenderLiningSequence::RenderLiningSequence()
 	{
 	}
@@ -148,6 +168,16 @@ namespace atres
 			_pVertices[2].y = _pVertices[4].y = _pVertices[5].y = _bottom;
 			this->vertices.add(_pVertices, 6);
 		}
+	}
+
+	void RenderLiningSequence::mergeFrom(const RenderLiningSequence& other)
+	{
+		this->vertices += other.vertices;
+	}
+
+	void RenderLiningSequence::clear()
+	{
+		this->vertices.clear();
 	}
 
 	RenderWord::RenderWord() :
