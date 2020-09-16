@@ -132,9 +132,9 @@ namespace atres
 	{
 	public:
 		april::Texture* texture;
-		april::Color currentColor;
-		bool multiplyAlpha;
+		unsigned char alpha;
 		unsigned char lastAlpha;
+		bool multiplyAlpha;
 		harray<april::ColoredTexturedVertex> vertices;
 		harray<april::Color> colors;
 		
