@@ -83,7 +83,7 @@ namespace atres
 		void horizontalCorrection(harray<RenderLine>& lines, cgrectf rect, Horizontal horizontal, float y);
 		harray<RenderWord> createRenderWords(cgrectf rect, chstr text, const harray<FormatTag>& tags);
 		harray<RenderLine> createRenderLines(cgrectf rect, chstr text, const harray<FormatTag>& tags, const Horizontal& horizontal, const Vertical& vertical, cgvec2f offset = gvec2f());
-		RenderText createRenderText(cgrectf rect, chstr text, const harray<RenderLine>& lines, const harray<FormatTag>& tags);
+		RenderText createRenderText(cgrectf rect, chstr text, const harray<RenderLine>& lines, const harray<FormatTag>& tags, const ColorData* colorData = NULL);
 		harray<RenderSequence> optimizeSequences(harray<RenderSequence>& sequences);
 		harray<RenderLiningSequence> optimizeSequences(harray<RenderLiningSequence>& sequences);
 
@@ -103,14 +103,10 @@ namespace atres
 		void drawText(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
 		void drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
 		// base methods
-		harray<RenderLine> makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center);
-		harray<RenderLine> makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center);
-		// color-based
-		harray<RenderLine> makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset = gvec2f());
-		harray<RenderLine> makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset = gvec2f());
-		// multi-color-based
-		harray<RenderLine> makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
-		harray<RenderLine> makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset = gvec2f());
+		harray<RenderLine> makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center,
+			const april::Color& color = april::Color::White, cgvec2f offset = gvec2f());
+		harray<RenderLine> makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal = Horizontal::Left, const Vertical& vertical = Vertical::Center,
+			const april::Color& color = april::Color::White, cgvec2f offset = gvec2f());
 
 		float getTextWidth(chstr fontName, chstr text);
 		float getTextWidth(chstr text);
@@ -172,6 +168,7 @@ namespace atres
 		void _initializeRenderSequences();
 		void _checkFormatTags(chstr text, int index);
 		void _processFormatTags(chstr text, int index);
+		void _makeGradientColors(cgrectf drawRect, const ColorData* colorData, april::Color& topLeft, april::Color& topRight, april::Color& bottomLeft, april::Color& bottomRight);
 		void _checkSequenceSwitch();
 		void _updateLiningSequenceSwitch(bool force = false);
 		bool _checkTextures();

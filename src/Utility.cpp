@@ -153,13 +153,34 @@ namespace atres
 			_ctVertices[1].x += italicSkewOffset;
 			_ctVertices[3].x += italicSkewOffset;
 		}
-		int colorValue = april::rendersys->getNativeColorUInt(color);
-		for_iter (i, 0, 6)
-		{
-			_ctVertices[i].color = colorValue;
-		}
 		this->vertices.add(_ctVertices, 6);
 		this->colors.add(color, 6);
+	}
+
+	void RenderSequence::addRenderRectangle(const RenderRectangle& rect, const april::Color& colorTopLeft, const april::Color& colorTopRight,
+		const april::Color& colorBottomLeft, const april::Color& colorBottomRight, float italicSkewOffset)
+	{
+		_ctVertices[0].x = _ctVertices[2].x = _ctVertices[4].x = rect.dest.left();
+		_ctVertices[1].x = _ctVertices[3].x = _ctVertices[5].x = rect.dest.right();
+		_ctVertices[0].y = _ctVertices[1].y = _ctVertices[3].y = rect.dest.top();
+		_ctVertices[2].y = _ctVertices[4].y = _ctVertices[5].y = rect.dest.bottom();
+		_ctVertices[0].u = _ctVertices[2].u = _ctVertices[4].u = rect.src.left();
+		_ctVertices[1].u = _ctVertices[3].u = _ctVertices[5].u = rect.src.right();
+		_ctVertices[0].v = _ctVertices[1].v = _ctVertices[3].v = rect.src.top();
+		_ctVertices[2].v = _ctVertices[4].v = _ctVertices[5].v = rect.src.bottom();
+		if (italicSkewOffset > 0.0f)
+		{
+			_ctVertices[0].x += italicSkewOffset;
+			_ctVertices[1].x += italicSkewOffset;
+			_ctVertices[3].x += italicSkewOffset;
+		}
+		this->vertices.add(_ctVertices, 6);
+		this->colors += colorTopLeft;
+		this->colors += colorTopRight;
+		this->colors += colorBottomLeft;
+		this->colors += colorTopRight;
+		this->colors += colorBottomLeft;
+		this->colors += colorBottomRight;
 	}
 
 	void RenderSequence::mergeFrom(const RenderSequence& other)

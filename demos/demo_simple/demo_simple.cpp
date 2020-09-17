@@ -59,6 +59,8 @@
 #define TEXT_5 "[b:,3]This is a vertical test.\nIt really is. Really."
 #define TEXT_6 "This is [c:FFFF00][t:FF0000]a [b=007FFF,2]strike-[i:icon_font]blue[/i]-[c:00FF00]through[/c]\ntest[/b][/t] [t]an[/t][/c][t]d[/t] " \
 	"this[u:,4]\nis an [s=007FFF,2,2]under[c:FF0000]line[/c]\nte[/s]st[/u]."
+#define TEXT_7 "This is a fitted\ngradient test."
+#define TEXT_8 "This is a non-fitted\ngradient test."
 
 grectf drawRect(0.0f, 0.0f, 800.0f, 600.0f);
 grectf viewport(0.0f, 0.0f, 1024.0f, 768.0f);
@@ -66,9 +68,11 @@ grectf textArea0(60.0f, 24.0f, 640.0f, 64.0f);
 grectf textArea1(70.0f, 144.0f, 864.0f, 32.0f);
 grectf textArea2(120.0f, 400.0f, 600.0f, 128.0f);
 grectf textArea3(80.0f, 550.0f, 360.0f, 184.0f);
-grectf textArea4(768.0f, 200.0f, 160.0f, 384.0f);
-grectf textArea5(700.0f, 600.0f, 240.0f, 76.0f);
-grectf textArea6(60.0f, 200.0f, 400.0f, 160.0f);
+grectf textArea4(800.0f, 200.0f, 160.0f, 384.0f);
+grectf textArea5(800.0f, 600.0f, 240.0f, 76.0f);
+grectf textArea6(40.0f, 200.0f, 400.0f, 160.0f);
+grectf textArea7(460.0f, 200.0f, 320.0f, 160.0f);
+grectf textArea8(460.0f, 550.0f, 320.0f, 160.0f);
 april::Color backgroundColor = april::Color(0, 0, 0, 128);
 
 class KeyDelegate : public april::KeyDelegate
@@ -167,6 +171,8 @@ public:
 		april::rendersys->drawFilledRect(textArea4, backgroundColor);
 		april::rendersys->drawFilledRect(textArea5, backgroundColor);
 		april::rendersys->drawFilledRect(textArea6, backgroundColor);
+		april::rendersys->drawFilledRect(textArea7, backgroundColor);
+		april::rendersys->drawFilledRect(textArea8, backgroundColor);
 		// texts
 		atres::renderer->drawText(textArea0, TEXT_0, atres::Horizontal::Center, atres::Vertical::Top);
 		atres::renderer->drawText("Arial:0.8", textArea1, TEXT_1, atres::Horizontal::LeftWrapped);
@@ -175,6 +181,13 @@ public:
 		atres::renderer->drawText("Arial:0.8", textArea4, TEXT_4, atres::Horizontal::Justified, atres::Vertical::Center, this->color);
 		atres::renderer->drawText(textArea5, TEXT_5, atres::Horizontal::Center, atres::Vertical::Center, april::Color::White, mouseDelegate->offset);
 		atres::renderer->drawText(textArea6, TEXT_6, atres::Horizontal::Center, atres::Vertical::Center, april::Color::White, mouseDelegate->offset);
+		atres::ColorData colorData(april::Color::Red, april::Color::Yellow, april::Color::White, april::Color::Green, true, true);
+		//atres::ColorData colorData(april::Color::Red, april::Color::Yellow, april::Color::Red, april::Color::Yellow, true, true);
+		//atres::ColorData colorData(april::Color::Red, april::Color::Red, april::Color::Yellow, april::Color::Yellow, true, true);
+		atres::renderer->drawText(textArea7, TEXT_7, atres::Horizontal::Center, atres::Vertical::Center, colorData);
+		colorData.horizontalColorFit = false;
+		colorData.verticalColorFit = false;
+		atres::renderer->drawText(textArea8, TEXT_8, atres::Horizontal::Center, atres::Vertical::Center, colorData);
 		return true;
 	}
 

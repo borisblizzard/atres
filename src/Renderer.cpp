@@ -1990,7 +1990,7 @@ namespace atres
 		return this->_lines;
 	}
 	
-	RenderText Renderer::createRenderText(cgrectf rect, chstr text, const harray<RenderLine>& lines, const harray<FormatTag>& tags)
+	RenderText Renderer::createRenderText(cgrectf rect, chstr text, const harray<RenderLine>& lines, const harray<FormatTag>& tags, const ColorData* colorData)
 	{
 		// by convention, the first tag is the font name
 		hstr firstFontName = tags.first().data.split(':').first();
@@ -2009,9 +2009,34 @@ namespace atres
 		grectf area;
 		grectf drawRect;
 		gvec2f rectSize;
-		april::Color borderColor;
+		april::Color colorTopLeft;
+		april::Color colorTopRight;
+		april::Color colorBottomLeft;
+		april::Color colorBottomRight;
 		int index = 0;
 		float italicSkewOffset = 0.0f;
+		grectf boundingRect = rect;
+		if (colorData != NULL)
+		{
+			if (colorData->horizontalColorFit)
+			{
+				float minX = boundingRect.right();
+				float maxX = boundingRect.x;
+				for_iter (i, 0, this->_lines.size())
+				{
+					minX = hmin(minX, this->_lines[i].rect.x);
+					maxX = hmax(maxX, this->_lines[i].rect.right());
+				}
+				boundingRect.x = minX;
+				boundingRect.w = maxX - minX;
+			}
+			if (colorData->verticalColorFit && this->_lines.size() > 0)
+			{
+				float rectHeight = this->_lines.size() * this->_lines[0].rect.h;
+				boundingRect.y += (boundingRect.h - rectHeight) * 0.5f;
+				boundingRect.h = rectHeight;
+			}
+		}
 		// basic text with borders, shadows and icons
 		for_iter (j, 0, this->_lines.size())
 		{
@@ -2052,8 +2077,15 @@ namespace atres
 							this->_renderRect = this->_iconFont->makeRenderRectangle(drawRect, area, this->_iconName);
 							if (this->_renderRect.src.w > 0.0f && this->_renderRect.src.h > 0.0f && this->_renderRect.dest.w > 0.0f && this->_renderRect.dest.h > 0.0f)
 							{
-								// TODOatres - add gradient colors here
-								this->_textSequence.addRenderRectangle(this->_renderRect, april::Color(this->_textColor, 255), italicSkewOffset);
+								if (colorData == NULL)
+								{
+									this->_textSequence.addRenderRectangle(this->_renderRect, april::Color(this->_textColor, 255), italicSkewOffset);
+								}
+								else
+								{
+									this->_makeGradientColors(boundingRect, colorData, colorTopLeft, colorTopRight, colorBottomLeft, colorBottomRight);
+									this->_textSequence.addRenderRectangle(this->_renderRect, colorTopLeft, colorTopRight, colorBottomLeft, colorBottomRight, italicSkewOffset);
+								}
 								switch (this->_effectMode)
 								{
 								case EFFECT_MODE_SHADOW: // shadow
@@ -2204,8 +2236,15 @@ namespace atres
 									if (this->_code != UNICODE_CHAR_SPACE && this->_code != UNICODE_CHAR_ZERO_WIDTH_SPACE)
 									{
 										this->_renderRect.dest.y -= this->_character->bearing.y * this->_scale;
-										// TODOatres - add gradient colors here
-										this->_textSequence.addRenderRectangle(this->_renderRect, april::Color(this->_textColor, 255), italicSkewOffset);
+										if (colorData == NULL)
+										{
+											this->_textSequence.addRenderRectangle(this->_renderRect, april::Color(this->_textColor, 255), italicSkewOffset);
+										}
+										else
+										{
+											this->_makeGradientColors(boundingRect, colorData, colorTopLeft, colorTopRight, colorBottomLeft, colorBottomRight);
+											this->_textSequence.addRenderRectangle(this->_renderRect, colorTopLeft, colorTopRight, colorBottomLeft, colorBottomRight, italicSkewOffset);
+										}
 										switch (this->_effectMode)
 										{
 										case EFFECT_MODE_SHADOW: // shadow
@@ -2350,6 +2389,26 @@ namespace atres
 		result.shadowLiningSequences = this->optimizeSequences(this->_shadowLiningSequences);
 		result.borderLiningSequences = this->optimizeSequences(this->_borderLiningSequences);
 		return result;
+	}
+
+	void Renderer::_makeGradientColors(cgrectf drawRect, const ColorData* colorData, april::Color& topLeft, april::Color& topRight, april::Color& bottomLeft, april::Color& bottomRight)
+	{
+		float ratioLeft = hclamp((this->_renderRect.dest.x - drawRect.x) / drawRect.w, 0.0f, 1.0f);
+		float ratioRight = hclamp((this->_renderRect.dest.right() - drawRect.x) / drawRect.w, 0.0f, 1.0f);
+		float ratioTop = hclamp((this->_renderRect.dest.y - drawRect.y) / drawRect.h, 0.0f, 1.0f);
+		float ratioBottom = hclamp((this->_renderRect.dest.bottom() - drawRect.y) / drawRect.h, 0.0f, 1.0f);
+		topLeft = (colorData->colorTopLeft * (1 - ratioLeft) + colorData->colorTopRight * ratioLeft) * (1 - ratioTop) +
+			(colorData->colorBottomLeft * (1 - ratioLeft) + colorData->colorBottomRight * ratioLeft) * ratioTop;
+		topLeft.a = 255;
+		topRight = (colorData->colorTopLeft * (1 - ratioRight) + colorData->colorTopRight * ratioRight) * (1 - ratioTop) +
+			(colorData->colorBottomLeft * (1 - ratioRight) + colorData->colorBottomRight * ratioRight) * ratioTop;
+		topRight.a = 255;
+		bottomLeft = (colorData->colorTopLeft * (1 - ratioLeft) + colorData->colorTopRight * ratioLeft) * (1 - ratioBottom) +
+			(colorData->colorBottomLeft * (1 - ratioLeft) + colorData->colorBottomRight * ratioLeft) * ratioBottom;
+		bottomLeft.a = 255;
+		bottomRight = (colorData->colorTopLeft * (1 - ratioRight) + colorData->colorTopRight * ratioRight) * (1 - ratioBottom) +
+			(colorData->colorBottomLeft * (1 - ratioRight) + colorData->colorBottomRight * ratioRight) * ratioBottom;
+		bottomRight.a = 255;
 	}
 
 	harray<RenderSequence> Renderer::optimizeSequences(harray<RenderSequence>& sequences)
@@ -2621,7 +2680,7 @@ namespace atres
 			{
 				this->_lines = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
 			}
-			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags);
+			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags, &colorData);
 			this->_cacheEntryText = this->cacheText->add(this->_cacheEntryTextData);
 			this->cacheText->update();
 		}
@@ -2645,31 +2704,21 @@ namespace atres
 			{
 				this->_lines = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
 			}
-			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags);
+			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags, &colorData);
 			this->_cacheEntryText = this->cacheTextUnformatted->add(this->_cacheEntryTextData);
 			this->cacheTextUnformatted->update();
 		}
 		this->_drawRenderText(this->_cacheEntryText->value, colorData.colorTopLeft);
 	}
 
-	harray<RenderLine> Renderer::makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical)
-	{
-		return this->makeRenderLines(fontName, rect, text, horizontal, vertical, april::Color::White, gvec2f());
-	}
-
-	harray<RenderLine> Renderer::makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical)
-	{
-		return this->makeRenderLinesUnformatted(fontName, rect, text, horizontal, vertical, april::Color::White, gvec2f());
-	}
-
 	harray<RenderLine> Renderer::makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset)
 	{
-		this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, color, offset);
+		this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
 		this->_cacheEntryLines = this->cacheLines->get(this->_cacheEntryLinesData);
 		if (this->_cacheEntryLines == NULL)
 		{
 			hstr unformattedText = text;
-			harray<FormatTag> tags = this->_makeDefaultTags(color, fontName, unformattedText);
+			harray<FormatTag> tags = this->_makeDefaultTags(april::Color(color, 255), fontName, unformattedText);
 			this->_cacheEntryLinesData.value = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
 			this->_cacheEntryLines = this->cacheLines->add(this->_cacheEntryLinesData);
 			this->cacheLines->update();
@@ -2684,35 +2733,6 @@ namespace atres
 		if (this->_cacheEntryLines == NULL)
 		{
 			harray<FormatTag> tags = this->_makeDefaultTagsUnformatted(april::Color(color, 255), fontName);
-			this->_cacheEntryLinesData.value = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
-			this->_cacheEntryLines = this->cacheLinesUnformatted->add(this->_cacheEntryLinesData);
-			this->cacheLinesUnformatted->update();
-		}
-		return this->_cacheEntryLines->value;
-	}
-
-	harray<RenderLine> Renderer::makeRenderLines(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset)
-	{
-		this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, colorData.colorTopLeft, offset);
-		this->_cacheEntryLines = this->cacheLines->get(this->_cacheEntryLinesData);
-		if (this->_cacheEntryLines == NULL)
-		{
-			hstr unformattedText = text;
-			harray<FormatTag> tags = this->_makeDefaultTags(colorData.colorTopLeft, fontName, unformattedText);
-			this->_cacheEntryLinesData.value = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
-			this->_cacheEntryLines = this->cacheLines->add(this->_cacheEntryLinesData);
-			this->cacheLines->update();
-		}
-		return this->_cacheEntryLines->value;
-	}
-
-	harray<RenderLine> Renderer::makeRenderLinesUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const ColorData& colorData, cgvec2f offset)
-	{
-		this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(colorData.colorTopLeft, 255), offset);
-		this->_cacheEntryLines = this->cacheLinesUnformatted->get(this->_cacheEntryLinesData);
-		if (this->_cacheEntryLines == NULL)
-		{
-			harray<FormatTag> tags = this->_makeDefaultTagsUnformatted(april::Color(colorData.colorTopLeft, 255), fontName);
 			this->_cacheEntryLinesData.value = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
 			this->_cacheEntryLines = this->cacheLinesUnformatted->add(this->_cacheEntryLinesData);
 			this->cacheLinesUnformatted->update();
