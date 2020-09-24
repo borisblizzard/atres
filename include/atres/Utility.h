@@ -142,7 +142,7 @@ namespace atres
 
 		/// @note Not thread-safe!
 		void addRenderRectangle(const RenderRectangle& rect, const april::Color& color, float italicSkewOffset);
-		void RenderSequence::addRenderRectangle(const RenderRectangle& rect, const april::Color& colorTopLeft, const april::Color& colorTopRight,
+		void addRenderRectangle(const RenderRectangle& rect, const april::Color& colorTopLeft, const april::Color& colorTopRight,
 			const april::Color& colorBottomLeft, const april::Color& colorBottomRight, float italicSkewOffset);
 		void mergeFrom(const RenderSequence& other);
 		void clear();
