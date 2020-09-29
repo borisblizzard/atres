@@ -131,7 +131,6 @@ namespace atres
 
 	RenderSequence::RenderSequence() :
 		texture(NULL),
-		alpha(255),
 		lastAlpha(0),
 		multiplyAlpha(false)
 	{

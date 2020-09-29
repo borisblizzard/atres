@@ -818,10 +818,8 @@ namespace atres
 		this->_textSequence = RenderSequence();
 		this->_shadowSequences.clear();
 		this->_shadowSequence = RenderSequence();
-		this->_shadowSequence.alpha = this->shadowColor.a;
 		this->_borderSequences.clear();
 		this->_borderSequence = RenderSequence();
-		this->_borderSequence.alpha = this->borderColor.a;
 		this->_renderRect = RenderRectangle();
 		this->_textLiningSequences.clear();
 		this->_textStrikeThroughSequence = RenderLiningSequence();
@@ -1464,7 +1462,7 @@ namespace atres
 
 	void Renderer::_checkSequenceSwitch()
 	{
-		if (this->_textSequence.texture != this->_texture || this->_textSequence.alpha != this->_textColor.a)
+		if (this->_textSequence.texture != this->_texture)
 		{
 			if (this->_textSequence.vertices.size() > 0)
 			{
@@ -1472,9 +1470,8 @@ namespace atres
 				this->_textSequence.clear();
 			}
 			this->_textSequence.texture = this->_texture;
-			this->_textSequence.alpha = this->_textColor.a;
 		}
-		if (this->_shadowSequence.texture != this->_texture || this->_shadowSequence.alpha != this->_shadowColor.a)
+		if (this->_shadowSequence.texture != this->_texture)
 		{
 			if (this->_shadowSequence.vertices.size() > 0)
 			{
@@ -1482,9 +1479,8 @@ namespace atres
 				this->_shadowSequence.clear();
 			}
 			this->_shadowSequence.texture = this->_texture;
-			this->_shadowSequence.alpha = this->_shadowColor.a;
 		}
-		if (this->_borderSequence.texture != this->_texture || this->_borderSequence.alpha != this->_borderColor.a)
+		if (this->_borderSequence.texture != this->_texture)
 		{
 			if (this->_borderSequence.vertices.size() > 0)
 			{
@@ -1492,7 +1488,6 @@ namespace atres
 				this->_borderSequence.clear();
 			}
 			this->_borderSequence.texture = this->_texture;
-			this->_borderSequence.alpha = this->_borderColor.a;
 		}
 		if (this->_textStrikeThroughSequence.color != this->_strikeThroughColor)
 		{
@@ -2523,10 +2518,9 @@ namespace atres
 		if (sequence.lastAlpha != alpha)
 		{
 			sequence.lastAlpha = alpha;
-			float alphaFloat = alpha * 0.003921569f; // 1 / 255;
 			for_iter (i, 0, sequence.vertices.size())
 			{
-				sequence.colors[i].a = (unsigned char)(sequence.alpha * alphaFloat);
+				sequence.colors[i].a = alpha;
 				sequence.vertices[i].color = april::rendersys->getNativeColorUInt(sequence.colors[i]);
 			}
 		}
