@@ -113,8 +113,8 @@ namespace atres
 		this->shadowOffset.set(1.0f, 1.0f);
 		this->shadowColor = april::Color::Black;
 		this->borderThickness = 1.0f;
-		this->strikeThroughThickness = 1.0f;
-		this->underlineThickness = 1.0f;
+		this->strikeThroughThickness = 2.0f;
+		this->underlineThickness = 2.0f;
 		this->borderColor = april::Color::Black;
 		this->globalOffsets = false;
 		this->useLegacyLineBreakParsing = false;
