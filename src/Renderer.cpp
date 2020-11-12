@@ -2621,12 +2621,12 @@ namespace atres
 		}
 		this->_drawRenderText(this->_cacheEntryText->value, color);
 	}
-
+	
 	void Renderer::drawTextUnformatted(chstr fontName, cgrectf rect, chstr text, const Horizontal& horizontal, const Vertical& vertical, const april::Color& color, cgvec2f offset)
 	{
 		this->_cacheEntryTextData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
 		this->_cacheEntryText = this->cacheTextUnformatted->get(this->_cacheEntryTextData);
-		if (this->_cacheEntryText != NULL || !this->_checkTextures())
+		if (this->_cacheEntryText == NULL || !this->_checkTextures())
 		{
 			harray<FormatTag> tags = this->_makeDefaultTagsUnformatted(color, fontName);
 			this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
