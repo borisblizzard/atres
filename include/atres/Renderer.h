@@ -267,8 +267,6 @@ namespace atres
 		CacheEntryText _cacheEntryTextData;
 		CacheEntryLines* _cacheEntryLines;
 		CacheEntryLines _cacheEntryLinesData;
-		CacheEntryLine* _cacheEntryLine;
-		CacheEntryLine _cacheEntryLineData;
 
 	};
 	
