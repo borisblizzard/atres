@@ -55,10 +55,15 @@ namespace atres
 			{
 				this->data[hash] = harray<T>();
 			}
-			this->data[hash] += entry;
-			T* result = &this->data[hash].last();
-			this->entries += result;
-			return result;
+			harray<T>& dataArray = this->data[hash];
+			int index = dataArray.indexOf(entry);
+			if (index < 0) // this prevents duplicates
+			{
+				index = dataArray.size();
+				dataArray += entry;
+				this->entries += &dataArray[index];
+			}
+			return &dataArray[index];
 		}
 		/// @brief Gets a cache entry.
 		/// @param[out] entry The output cache entry. Will only be filled with data if return is true.
@@ -68,13 +73,11 @@ namespace atres
 			unsigned int hash = entry.hash();
 			if (this->data.hasKey(hash))
 			{
-				harray<T>& array = this->data[hash];
-				for (iterator_t it = array.begin(); it != array.end(); ++it)
+				harray<T>& dataArray = this->data[hash];
+				int index = dataArray.indexOf(entry);
+				if (index >= 0)
 				{
-					if (entry == (*it))
-					{
-						return &(*it);
-					}
+					return &dataArray[index];
 				}
 			}
 			return NULL;
@@ -86,16 +89,19 @@ namespace atres
 			unsigned int hash = entry.hash();
 			if (this->data.hasKey(hash))
 			{
-				if (this->data[hash].size() == 1)
+				harray<T>& dataArray = this->data[hash];
+				int index = dataArray.indexOf(entry);
+				if (index >= 0) // safety guard, should never be < 0, but crashes have been happening
 				{
-					this->entries.remove(&this->data[hash].last());
-					this->data.removeKey(hash);
-				}
-				else
-				{
-					int index = this->data[hash].indexOf(entry);
-					this->entries.remove(&this->data[hash][index]);
-					this->data[hash].removeAt(index);
+					this->entries.remove(&dataArray[index]);
+					if (dataArray.size() <= 1)
+					{
+						this->data.removeKey(hash);
+					}
+					else
+					{
+						dataArray.removeAt(index);
+					}
 				}
 			}
 		}
@@ -119,10 +125,30 @@ namespace atres
 				int overSize = this->data.size() - this->maxSize;
 				if (overSize > 0)
 				{
-					hlist<T*> removed = this->entries(0, overSize);
+					// manual implementation due to crashes happening with removeEntry
+					hlist<T*> removed = this->entries.removeFirst(overSize);
+					unsigned int hash = 0;
+					int index = 0;
+					harray<T>& dataArray = harray<T>();
 					for (list_iterator_t it = removed.begin(); it != removed.end(); ++it)
 					{
-						this->removeEntry(*(*it));
+						hash = (*it)->hash();
+						if (this->data.hasKey(hash))
+						{
+							dataArray = this->data[hash];
+							index = dataArray.indexOf(*(*it));
+							if (index >= 0) // safety guard, should never be < 0, but crashes have been happening
+							{
+								if (dataArray.size() <= 1)
+								{
+									this->data.removeKey(hash);
+								}
+								else
+								{
+									dataArray.removeAt(index);
+								}
+							}
+						}
 					}
 				}
 			}

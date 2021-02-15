@@ -424,17 +424,20 @@ namespace atres
 		fvar = &this->offset.x;	result ^= *((unsigned int*)fvar);
 		fvar = &this->offset.y;	result ^= *((unsigned int*)fvar);
 		bvar = &this->useMoreColors;	result ^= *((unsigned int*)bvar);
-		result ^= (this->colorTopRight.r << 8);
-		result ^= (this->colorTopRight.g << 16);
-		result ^= (this->colorTopRight.b << 24);
-		result ^= (this->colorBottomLeft.r << 8);
-		result ^= (this->colorBottomLeft.g << 16);
-		result ^= (this->colorBottomLeft.b << 24);
-		result ^= (this->colorBottomRight.r << 8);
-		result ^= (this->colorBottomRight.g << 16);
-		result ^= (this->colorBottomRight.b << 24);
-		bvar = &this->horizontalColorFit;	result ^= *((unsigned int*)bvar);
-		bvar = &this->verticalColorFit;		result ^= *((unsigned int*)bvar);
+		if (this->useMoreColors)
+		{
+			result ^= (this->colorTopRight.r << 8);
+			result ^= (this->colorTopRight.g << 16);
+			result ^= (this->colorTopRight.b << 24);
+			result ^= (this->colorBottomLeft.r << 8);
+			result ^= (this->colorBottomLeft.g << 16);
+			result ^= (this->colorBottomLeft.b << 24);
+			result ^= (this->colorBottomRight.r << 8);
+			result ^= (this->colorBottomRight.g << 16);
+			result ^= (this->colorBottomRight.b << 24);
+			bvar = &this->horizontalColorFit;	result ^= *((unsigned int*)bvar);
+			bvar = &this->verticalColorFit;		result ^= *((unsigned int*)bvar);
+		}
 		return result;
 	}
 
