@@ -281,7 +281,7 @@ namespace atres
 
 		BorderTextureContainer(float borderThickness);
 
-		TextureContainer* createNew() const;
+		TextureContainer* createNew() const override;
 
 	};
 

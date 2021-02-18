@@ -132,13 +132,13 @@ namespace atresttf
 		HL_DEFINE_GET(hstr, fontFilename, FontFilename);
 		/// @brief Sets the border rendering mode.
 		/// @param[in] value The border rendering mode.
-		void setBorderMode(const BorderMode& value);
+		void setBorderMode(const BorderMode& value) override;
 
 		/// @brief Gets kerning between two char codes.
 		/// @param[in] previousCharCode Character unicode value of the preceding character.
 		/// @param[in] charCode Character unicode value.
 		/// @return The kerning value.
-		float getKerning(unsigned int previousCharCode, unsigned int charCode);
+		float getKerning(unsigned int previousCharCode, unsigned int charCode) override;
 
 	protected:
 		/// @brief Whether to use a custom descender value that overrides the actual font's descender.
@@ -166,7 +166,7 @@ namespace atresttf
 
 		/// @brief Loads the font definition.
 		/// @return True if successfully loaded.
-		bool _load();
+		bool _load() override;
 		
 		/// @brief Loads an character image.
 		/// @param[in] charCode Character unicode value.
@@ -178,12 +178,12 @@ namespace atresttf
 		/// @param[out] descender Descender value.
 		/// @param[out] bearingX Horizontal bearing.
 		/// @return The loaded image.
-		april::Image* _loadCharacterImage(unsigned int charCode, bool initial, float& advance, int& leftOffset, int& topOffset, float& ascender, float& descender, float& bearingX);
+		april::Image* _loadCharacterImage(unsigned int charCode, bool initial, float& advance, int& leftOffset, int& topOffset, float& ascender, float& descender, float& bearingX) override;
 		/// @brief Loads a border character image.
 		/// @param[in] charCode Character unicode value.
 		/// @param[in] borderThickness Thickness of the border.
 		/// @return The loaded image.
-		april::Image* _loadBorderCharacterImage(unsigned int charCode, float borderThickness);
+		april::Image* _loadBorderCharacterImage(unsigned int charCode, float borderThickness) override;
 
 	};
 

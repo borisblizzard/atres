@@ -35,7 +35,7 @@ namespace atres
 
 		/// @brief Loads the font definition.
 		/// @return True if successfully loaded.
-		bool _load();
+		bool _load() override;
 
 	};
 

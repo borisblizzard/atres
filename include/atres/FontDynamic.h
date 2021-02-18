@@ -44,52 +44,52 @@ namespace atres
 		HL_DEFINE_GET(int, textureSize, textureSize);
 		/// @brief Sets the border rendering mode.
 		/// @param[in] value The border rendering mode.
-		void setBorderMode(const BorderMode& value);
+		void setBorderMode(const BorderMode& value) override;
 
 		/// @brief Get the texture where the character definition for a specific char code is currently contained.
 		/// @param[in] charCode Character unicode value.
 		/// @return The texture.
-		april::Texture* getTexture(unsigned int charCode);
+		april::Texture* getTexture(unsigned int charCode) override;
 		/// @brief Get the texture where the border character definition for a specific char code is currently contained.
 		/// @param[in] charCode Character unicode value.
 		/// @param[in] borderThickness Thickness of the border.
 		/// @return The texture.
-		april::Texture* getBorderTexture(unsigned int charCode, float borderThickness);
+		april::Texture* getBorderTexture(unsigned int charCode, float borderThickness) override;
 		/// @brief Get the texture where the icon definition for a specific icon name is currently contained.
 		/// @param[in] iconName Icon name.
 		/// @return The texture.
-		april::Texture* getTexture(chstr iconName);
+		april::Texture* getTexture(chstr iconName) override;
 		/// @brief Get the texture where the border icon definition for a specific icon name is currently contained.
 		/// @param[in] iconName Icon name.
 		/// @param[in] borderThickness Thickness of the border.
 		/// @return The texture.
-		april::Texture* getBorderTexture(chstr iconName, float borderThickness);
+		april::Texture* getBorderTexture(chstr iconName, float borderThickness) override;
 		/// @brief Checks if a character definition has been loaded already.
 		/// @param[in] charCode Character unicode value.
 		/// @return True if character is loaded.
-		bool hasCharacter(unsigned int charCode);
+		bool hasCharacter(unsigned int charCode) override;
 		/// @brief Checks if a border character definition has been loaded already.
 		/// @param[in] charCode Character unicode value.
 		/// @param[in] borderThickness Thickness of the border.
 		/// @return True if border character is loaded.
-		bool hasBorderCharacter(unsigned int charCode, float borderThickness);
+		bool hasBorderCharacter(unsigned int charCode, float borderThickness) override;
 		/// @brief Checks if a icon definition has been loaded already.
 		/// @param[in] iconName Icon name.
 		/// @return True if icon is loaded.
-		bool hasIcon(chstr iconName);
+		bool hasIcon(chstr iconName) override;
 		/// @brief Checks if a border icon definition has been loaded already.
 		/// @param[in] iconName Icon name.
 		/// @param[in] borderThickness Thickness of the border.
 		/// @return True if border icon is loaded.
-		bool hasBorderIcon(chstr iconName, float borderThickness);
+		bool hasBorderIcon(chstr iconName, float borderThickness) override;
 
 		/// @brief Loads basic ASCII range of characters.
 		/// @param[in] iconName Icon name.
 		/// @return True if icon is loaded.
-		void loadBasicAsciiCharacters();
+		void loadBasicAsciiCharacters() override;
 		/// @brief Loads basic ASCII range of border characters.
 		/// @param[in] borderThickness Thickness of the border.
-		void loadBasicAsciiBorderCharacters(float borderThickness);
+		void loadBasicAsciiBorderCharacters(float borderThickness) override;
 
 	protected:
 		/// @brief Helper class for structuring images when using a prerendered border rendering mode.

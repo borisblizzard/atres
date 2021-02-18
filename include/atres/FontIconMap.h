@@ -82,18 +82,18 @@ namespace atres
 
 		/// @brief Checks if alpha-textures can be used for this font.
 		/// @return True if alpha-textures can be used for this font.
-		bool _isAllowAlphaTextures() const;
+		bool _isAllowAlphaTextures() const override;
 
 		/// @brief Loads the font definition.
 		/// @return True if successfully loaded.
-		bool _load();
+		bool _load() override;
 
 		/// @brief Loads an icon image.
 		/// @param[in] iconName Name of the icon image to load.
 		/// @param[in] initial Whether this is the first attempt to write on the texture (used for internal optimization).
 		/// @param[out] advance The Horizontal advance value.
 		/// @return The loaded image.
-		april::Image* _loadIconImage(chstr iconName, bool initial, float& advance);
+		april::Image* _loadIconImage(chstr iconName, bool initial, float& advance) override;
 
 	};
 
