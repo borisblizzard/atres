@@ -374,17 +374,17 @@ namespace atres
 			if (this->useMoreColors == other.useMoreColors)
 			{
 				if (!this->useMoreColors ||
-					this->colorTopRight.r == other.colorTopRight.r &&
-					this->colorTopRight.g == other.colorTopRight.g &&
-					this->colorTopRight.b == other.colorTopRight.b &&
-					this->colorBottomLeft.r == other.colorBottomLeft.r &&
-					this->colorBottomLeft.g == other.colorBottomLeft.g &&
-					this->colorBottomLeft.b == other.colorBottomLeft.b &&
-					this->colorBottomRight.r == other.colorBottomRight.r &&
-					this->colorBottomRight.g == other.colorBottomRight.g &&
-					this->colorBottomRight.b == other.colorBottomRight.b &&
-					this->horizontalColorFit == other.horizontalColorFit &&
-					this->verticalColorFit == other.verticalColorFit)
+					(this->colorTopRight.r == other.colorTopRight.r &&
+					 this->colorTopRight.g == other.colorTopRight.g &&
+					 this->colorTopRight.b == other.colorTopRight.b &&
+					 this->colorBottomLeft.r == other.colorBottomLeft.r &&
+					 this->colorBottomLeft.g == other.colorBottomLeft.g &&
+					 this->colorBottomLeft.b == other.colorBottomLeft.b &&
+					 this->colorBottomRight.r == other.colorBottomRight.r &&
+					 this->colorBottomRight.g == other.colorBottomRight.g &&
+					 this->colorBottomRight.b == other.colorBottomRight.b &&
+					 this->horizontalColorFit == other.horizontalColorFit &&
+					 this->verticalColorFit == other.verticalColorFit))
 				{
 					return true;
 				}

@@ -292,7 +292,7 @@ namespace atres
 
 	bool Renderer::hasFont(chstr name) const
 	{
-		return (name == "" && this->defaultFont != NULL || this->fonts.hasKey(name));
+		return ((name == "" && this->defaultFont != NULL) || this->fonts.hasKey(name));
 	}
 	
 	void Renderer::registerFont(Font* font, bool allowDefault)
@@ -662,7 +662,7 @@ namespace atres
 	void Renderer::horizontalCorrection(harray<RenderLine>& lines, cgrectf rect, Horizontal horizontal, float x)
 	{
 		// horizontal correction not necessary when left aligned
-		if (horizontal.isLeft() || horizontal == Horizontal::Justified && this->justifiedDefault != Horizontal::Justified)
+		if (horizontal.isLeft() || (horizontal == Horizontal::Justified && this->justifiedDefault != Horizontal::Justified))
 		{
 			foreach (RenderLine, it, lines)
 			{
@@ -2223,7 +2223,7 @@ namespace atres
 							area.y += this->_lineHeight * (1.0f - this->_textScale) * 0.5f;
 							drawRect = rect;
 							// optimization, don't render spaces, but do render their strike-throughs and underlines
-							if (this->_font != NULL && (this->_code != UNICODE_CHAR_SPACE && this->_code != UNICODE_CHAR_ZERO_WIDTH_SPACE || this->_strikeThroughActive || this->_underlineActive))
+							if (this->_font != NULL && ((this->_code != UNICODE_CHAR_SPACE && this->_code != UNICODE_CHAR_ZERO_WIDTH_SPACE) || this->_strikeThroughActive || this->_underlineActive))
 							{
 								this->_renderRect = this->_font->makeRenderRectangle(drawRect, area, this->_code);
 								if (this->_renderRect.src.w > 0.0f && this->_renderRect.src.h > 0.0f && this->_renderRect.dest.w > 0.0f && this->_renderRect.dest.h > 0.0f)
