@@ -111,7 +111,7 @@ namespace atres
 			hlist<T*> removed = this->entries.removeFirst(overSize);
 			unsigned int hash = 0;
 			int index = 0;
-			harray<T*>& dataArray = harray<T*>();
+			harray<T*> dataArray;
 			foreach_l (T*, it, removed)
 			{
 				hash = (*it)->hash();
