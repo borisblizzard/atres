@@ -359,7 +359,7 @@ namespace atres
 		this->offset = offset;
 	}
 
-	bool CacheEntryBasicText::operator==(const CacheEntryBasicText& other) const
+	bool CacheEntryBasicText::isEqual(const CacheEntryBasicText& other) const
 	{
 		if (this->text == other.text &&
 			this->fontName == other.fontName &&
@@ -393,14 +393,9 @@ namespace atres
 		return false;
 	}
 
-	bool CacheEntryBasicText::operator!=(const CacheEntryBasicText& other) const
-	{
-		return !(*this == other);
-	}
-
 	unsigned int CacheEntryBasicText::hash() const
 	{
-		unsigned int result = 0xFFFFFFFF;
+		unsigned int result = 0;
 		for_iter (i, 0, this->text.size())
 		{
 			result ^= this->text[i] << ((i % 4) * 8);
@@ -413,16 +408,16 @@ namespace atres
 		const float* fvar = NULL;
 		const bool* bvar = NULL;
 		fvar = &this->rect.x;	result ^= *((unsigned int*)fvar);
-		fvar = &this->rect.y;	result ^= *((unsigned int*)fvar);
-		fvar = &this->rect.w;	result ^= *((unsigned int*)fvar);
-		fvar = &this->rect.h;	result ^= *((unsigned int*)fvar);
+		fvar = &this->rect.y;	result ^= *((unsigned int*)fvar) << 8;
+		fvar = &this->rect.w;	result ^= *((unsigned int*)fvar) << 16;
+		fvar = &this->rect.h;	result ^= *((unsigned int*)fvar) << 24;
 		result ^= (((unsigned int)(this->vertical.value)) & 0xFFFF);
-		result ^= (((unsigned int)(this->horizontal.value) << 16) & 0xFFFF);
+		result ^= (((unsigned int)(this->horizontal.value) << 16) & 0xFFFF0000);
 		result ^= (this->color.r << 8);
 		result ^= (this->color.g << 16);
 		result ^= (this->color.b << 24);
-		fvar = &this->offset.x;	result ^= *((unsigned int*)fvar);
-		fvar = &this->offset.y;	result ^= *((unsigned int*)fvar);
+		fvar = &this->offset.x;	result ^= *((unsigned int*)fvar) & 0xFFFF;
+		fvar = &this->offset.y;	result ^= (*((unsigned int*)fvar) << 16) & 0xFFFF0000;
 		bvar = &this->useMoreColors;	result ^= *((unsigned int*)bvar);
 		if (this->useMoreColors)
 		{
@@ -435,8 +430,8 @@ namespace atres
 			result ^= (this->colorBottomRight.r << 8);
 			result ^= (this->colorBottomRight.g << 16);
 			result ^= (this->colorBottomRight.b << 24);
-			bvar = &this->horizontalColorFit;	result ^= *((unsigned int*)bvar);
-			bvar = &this->verticalColorFit;		result ^= *((unsigned int*)bvar);
+			bvar = &this->horizontalColorFit;	result ^= *((unsigned int*)bvar) & 0xFFFF;
+			bvar = &this->verticalColorFit;		result ^= (*((unsigned int*)bvar) << 16) & 0xFFFF0000;
 		}
 		return result;
 	}
@@ -446,29 +441,9 @@ namespace atres
 	{
 	}
 
-	bool CacheEntryText::operator==(const CacheEntryText& other) const
-	{
-		return CacheEntryBasicText::operator==(other);
-	}
-
-	bool CacheEntryText::operator!=(const CacheEntryText& other) const
-	{
-		return CacheEntryBasicText::operator!=(other);
-	}
-
 	CacheEntryLines::CacheEntryLines() :
 		CacheEntryBasicText()
 	{
-	}
-
-	bool CacheEntryLines::operator==(const CacheEntryLines& other) const
-	{
-		return CacheEntryBasicText::operator==(other);
-	}
-
-	bool CacheEntryLines::operator!=(const CacheEntryLines& other) const
-	{
-		return CacheEntryBasicText::operator!=(other);
 	}
 
 	CacheEntryLine::CacheEntryLine()
@@ -482,19 +457,14 @@ namespace atres
 		this->size = size;
 	}
 
-	bool CacheEntryLine::operator==(const CacheEntryLine& other) const
+	bool CacheEntryLine::isEqual(const CacheEntryLine& other) const
 	{
 		return (this->text == other.text && this->fontName == other.fontName && this->size == other.size);
 	}
 
-	bool CacheEntryLine::operator!=(const CacheEntryLine& other) const
-	{
-		return !(*this == other);
-	}
-
 	unsigned int CacheEntryLine::hash() const
 	{
-		unsigned int result = 0xFFFFFFFF;
+		unsigned int result = 0;
 		for_iter (i, 0, this->text.size())
 		{
 			result ^= this->text[i] << ((i % 4) * 8);
@@ -506,7 +476,7 @@ namespace atres
 		// this code with fvar is used to avoid strict aliasing violations
 		const float* fvar = NULL;
 		fvar = &this->size.x;	result ^= *((unsigned int*)fvar);
-		fvar = &this->size.y;	result ^= *((unsigned int*)fvar);
+		fvar = &this->size.y;	result ^= (*((unsigned int*)fvar) << 16) & 0xFFFF0000;
 		return result;
 	}
 	

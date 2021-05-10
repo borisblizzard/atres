@@ -29,10 +29,6 @@ namespace atres
 	template <typename T>
 	class Cache
 	{
-		/// @brief Alias for simpler code.
-		typedef typename std::vector<T>::iterator iterator_t;
-		/// @brief Alias for simpler code.
-		typedef typename std::list<T*>::iterator list_iterator_t;
 	public:
 		/// @brief Constructor.
 		inline Cache()
@@ -48,110 +44,94 @@ namespace atres
 		}
 		/// @brief Adds a cache entry.
 		/// @param[in] entry The cache entry.
-		inline T* add(T& entry)
+		inline T* add(const T& entry)
 		{
 			unsigned int hash = entry.hash();
 			if (!this->data.hasKey(hash))
 			{
-				this->data[hash] = harray<T>();
+				this->data[hash] = harray<T*>();
 			}
-			harray<T>& dataArray = this->data[hash];
-			int index = dataArray.indexOf(entry);
+			harray<T*>& dataArray = this->data[hash];
+			int index = this->_indexOf(dataArray, entry);
 			if (index < 0) // this prevents duplicates
 			{
 				index = dataArray.size();
-				dataArray += entry;
-				this->entries += &dataArray[index];
+				T* newEntry = new T(entry);
+				dataArray += newEntry;
+				this->entries += newEntry;
 			}
-			return &dataArray[index];
+			return dataArray[index];
 		}
 		/// @brief Gets a cache entry.
-		/// @param[out] entry The output cache entry. Will only be filled with data if return is true.
+		/// @param[in] entry The cache entry.
 		/// @return The entry.
-		inline T* get(T& entry)
+		inline T* get(const T& entry)
 		{
 			unsigned int hash = entry.hash();
 			if (this->data.hasKey(hash))
 			{
-				harray<T>& dataArray = this->data[hash];
-				int index = dataArray.indexOf(entry);
+				harray<T*>& dataArray = this->data[hash];
+				int index = this->_indexOf(dataArray, entry);
 				if (index >= 0)
 				{
-					return &dataArray[index];
+					return dataArray[index];
 				}
 			}
 			return NULL;
 		}
-		/// @brief Removes a cache entry.
-		/// @param[in] entry The cache entry.
-		inline void removeEntry(const T& entry)
-		{
-			unsigned int hash = entry.hash();
-			if (this->data.hasKey(hash))
-			{
-				harray<T>& dataArray = this->data[hash];
-				int index = dataArray.indexOf(entry);
-				if (index >= 0) // safety guard, should never be < 0, but crashes have been happening
-				{
-					this->entries.remove(&dataArray[index]);
-					if (dataArray.size() <= 1)
-					{
-						this->data.removeKey(hash);
-					}
-					else
-					{
-						dataArray.removeAt(index);
-					}
-				}
-			}
-		}
 		/// @brief Clears cache.
 		inline void clear()
 		{
-			this->data.clear();
+			foreach_l (T*, it, this->entries)
+			{
+				delete (*it);
+			}
 			this->entries.clear();
+			this->data.clear();
 		}
 		/// @brief Gets the current size of the cache.
 		/// @return The current size of the cache.
 		inline int getSize() const
 		{
-			return this->data.size();
+			return this->entries.size();
 		}
 		/// @brief Updates all cache entries.
 		inline void update()
 		{
-			if (this->maxSize >= 0)
+			if (this->maxSize < 0)
 			{
-				int overSize = this->data.size() - this->maxSize;
-				if (overSize > 0)
+				return;
+			}
+			int overSize = this->entries.size() - this->maxSize;
+			if (overSize <= 0)
+			{
+				return;
+			}
+			// manual implementation due to crashes happening with removeEntry
+			hlist<T*> removed = this->entries.removeFirst(overSize);
+			unsigned int hash = 0;
+			int index = 0;
+			harray<T*>& dataArray = harray<T*>();
+			foreach_l (T*, it, removed)
+			{
+				hash = (*it)->hash();
+				if (this->data.hasKey(hash))
 				{
-					// manual implementation due to crashes happening with removeEntry
-					hlist<T*> removed = this->entries.removeFirst(overSize);
-					unsigned int hash = 0;
-					int index = 0;
-					harray<T> _array;
-					harray<T>& dataArray = _array;
-					for (list_iterator_t it = removed.begin(); it != removed.end(); ++it)
+					dataArray = this->data[hash];
+					index = dataArray.indexOf(*it);
+					if (index >= 0) // safety guard, should never be < 0, but crashes have been happening
 					{
-						hash = (*it)->hash();
-						if (this->data.hasKey(hash))
+						if (dataArray.size() <= 1)
 						{
-							dataArray = this->data[hash];
-							index = dataArray.indexOf(*(*it));
-							if (index >= 0) // safety guard, should never be < 0, but crashes have been happening
-							{
-								if (dataArray.size() <= 1)
-								{
-									this->data.removeKey(hash);
-								}
-								else
-								{
-									dataArray.removeAt(index);
-								}
-							}
+							this->data.removeKey(hash);
+						}
+						else
+						{
+							this->data[hash].removeAt(index); // must not use dataArray directly, harray reference doesn't seem to work
 						}
 					}
 				}
+				delete (*it);
 			}
 		}
 		
@@ -159,11 +139,27 @@ namespace atres
 		/// @brief Max size of the cache.
 		int maxSize;
 		/// @brief The cache entries.
-		hmap<unsigned int, harray<T> > data;
+		hmap<unsigned int, harray<T*> > data;
 		/// @brief A list of all hashes.
 		/// @note Using hlist because add/remove has a constant complexity while harray would have to reorder/resize all elements.
 		hlist<T*> entries;
 		
+		/// @brief Finds index of element in data array.
+		/// @param[in] entry The cache entry.
+		/// @return The entry.
+		inline int _indexOf(const harray<T*>& array, const T& element) const
+		{
+			int size = array.size();
+			for_iter (i, 0, size)
+			{
+				if (array[i]->isEqual(element))
+				{
+					return i;
+				}
+			}
+			return -1;
+		}
+
 	};
 	
 }

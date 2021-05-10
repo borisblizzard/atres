@@ -161,8 +161,6 @@ namespace atres
 		Cache<CacheEntryLines>* cacheLines;
 		Cache<CacheEntryLines>* cacheLinesUnformatted;
 
-		void _updateCache();
-
 		void _initializeFormatTags(const harray<FormatTag>& tags);
 		void _initializeLineProcessing(const harray<RenderLine>& lines = harray<RenderLine>());
 		void _initializeRenderSequences();

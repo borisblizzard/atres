@@ -404,14 +404,6 @@ namespace atres
 		return font;
 	}
 	
-	void Renderer::_updateCache()
-	{
-		this->cacheText->update();
-		this->cacheTextUnformatted->update();
-		this->cacheLines->update();
-		this->cacheLinesUnformatted->update();
-	}
-	
 	void Renderer::clearCache()
 	{
 		if (this->cacheText->getSize() > 0)
@@ -2607,14 +2599,13 @@ namespace atres
 			harray<FormatTag> tags = this->_makeDefaultTags(color, fontName, unformattedText);
 			this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
 			this->_cacheEntryLines = this->cacheLines->get(this->_cacheEntryLinesData);
-			if (this->_cacheEntryLines != NULL)
+			if (this->_cacheEntryLines == NULL)
 			{
-				this->_lines = this->_cacheEntryLines->value;
+				this->_cacheEntryLinesData.value = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
+				this->_cacheEntryLines = this->cacheLines->add(this->_cacheEntryLinesData);
+				this->cacheLines->update();
 			}
-			else
-			{
-				this->_lines = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
-			}
+			this->_lines = this->_cacheEntryLines->value;
 			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags);
 			this->_cacheEntryText = this->cacheText->add(this->_cacheEntryTextData);
 			this->cacheText->update();
@@ -2631,14 +2622,13 @@ namespace atres
 			harray<FormatTag> tags = this->_makeDefaultTagsUnformatted(color, fontName);
 			this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(color, 255), offset);
 			this->_cacheEntryLines = this->cacheLinesUnformatted->get(this->_cacheEntryLinesData);
-			if (this->_cacheEntryLines != NULL)
+			if (this->_cacheEntryLines == NULL)
 			{
-				this->_lines = this->_cacheEntryLines->value;
+				this->_cacheEntryLinesData.value = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
+				this->_cacheEntryLines = this->cacheLinesUnformatted->add(this->_cacheEntryLinesData);
+				this->cacheLinesUnformatted->update();
 			}
-			else
-			{
-				this->_lines = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
-			}
+			this->_lines = this->_cacheEntryLines->value;
 			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags);
 			this->_cacheEntryText = this->cacheTextUnformatted->add(this->_cacheEntryTextData);
 			this->cacheTextUnformatted->update();
@@ -2666,14 +2656,13 @@ namespace atres
 			harray<FormatTag> tags = this->_makeDefaultTags(colorData.colorTopLeft, fontName, unformattedText);
 			this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(colorData.colorTopLeft, 255), offset);
 			this->_cacheEntryLines = this->cacheLines->get(this->_cacheEntryLinesData);
-			if (this->_cacheEntryLines != NULL)
+			if (this->_cacheEntryLines == NULL)
 			{
-				this->_lines = this->_cacheEntryLines->value;
+				this->_cacheEntryLinesData.value = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
+				this->_cacheEntryLines = this->cacheLines->add(this->_cacheEntryLinesData);
+				this->cacheLines->update();
 			}
-			else
-			{
-				this->_lines = this->createRenderLines(rect, unformattedText, tags, horizontal, vertical, offset);
-			}
+			this->_lines = this->_cacheEntryLines->value;
 			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags, &colorData);
 			this->_cacheEntryText = this->cacheText->add(this->_cacheEntryTextData);
 			this->cacheText->update();
@@ -2690,14 +2679,13 @@ namespace atres
 			harray<FormatTag> tags = this->_makeDefaultTagsUnformatted(colorData.colorTopLeft, fontName);
 			this->_cacheEntryLinesData.set(text, fontName, rect, horizontal, vertical, april::Color(colorData.colorTopLeft, 255), offset);
 			this->_cacheEntryLines = this->cacheLinesUnformatted->get(this->_cacheEntryLinesData);
-			if (this->_cacheEntryLines != NULL)
+			if (this->_cacheEntryLines == NULL)
 			{
-				this->_lines = this->_cacheEntryLines->value;
+				this->_cacheEntryLinesData.value = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
+				this->_cacheEntryLines = this->cacheLinesUnformatted->add(this->_cacheEntryLinesData);
+				this->cacheLinesUnformatted->update();
 			}
-			else
-			{
-				this->_lines = this->createRenderLines(rect, text, tags, horizontal, vertical, offset);
-			}
+			this->_lines = this->_cacheEntryLines->value;
 			this->_cacheEntryTextData.value = this->createRenderText(rect, text, this->_lines, tags, &colorData);
 			this->_cacheEntryText = this->cacheTextUnformatted->add(this->_cacheEntryTextData);
 			this->cacheTextUnformatted->update();

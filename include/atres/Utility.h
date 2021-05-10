@@ -308,8 +308,7 @@ namespace atres
 		void set(chstr text, chstr fontName, cgrectf rect, Horizontal horizontal, Vertical vertical, const april::Color& color, cgvec2f offset);
 		void set(chstr text, chstr fontName, cgrectf rect, Horizontal horizontal, Vertical vertical, const april::Color& color, bool useMoreColors,
 			const april::Color& colorTopRight, const april::Color& colorBottomLeft, const april::Color& colorBottomRight, bool horizontalColorFit, bool verticalColorFit, cgvec2f offset);
-		bool operator==(const CacheEntryBasicText& other) const;
-		bool operator!=(const CacheEntryBasicText& other) const;
+		virtual bool isEqual(const CacheEntryBasicText& other) const;
 		unsigned int hash() const;
 
 	};
@@ -321,9 +320,6 @@ namespace atres
 
 		CacheEntryText();
 
-		bool operator==(const CacheEntryText& other) const;
-		bool operator!=(const CacheEntryText& other) const;
-
 	};
 
 	class CacheEntryLines : public CacheEntryBasicText
@@ -332,9 +328,6 @@ namespace atres
 		harray<RenderLine> value;
 
 		CacheEntryLines();
-
-		bool operator==(const CacheEntryLines& other) const;
-		bool operator!=(const CacheEntryLines& other) const;
 
 	};
 
@@ -349,8 +342,7 @@ namespace atres
 		CacheEntryLine();
 
 		void set(chstr text, chstr fontName, cgvec2f size);
-		bool operator==(const CacheEntryLine& other) const;
-		bool operator!=(const CacheEntryLine& other) const;
+		bool isEqual(const CacheEntryLine& other) const;
 		unsigned int hash() const;
 
 	};
